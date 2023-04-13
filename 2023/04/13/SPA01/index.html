@@ -7,7 +7,7 @@
 <meta property="og:locale">
 <meta property="og:image" content="http://example.com/img/banner/Apr.jpg">
 <meta property="article:published_time" content="2023-04-13T07:30:27.000Z">
-<meta property="article:modified_time" content="2023-04-13T11:32:22.000Z">
+<meta property="article:modified_time" content="2023-04-13T11:41:06.000Z">
 <meta property="article:author" content="MMonster">
 <meta property="article:tag" content="Soot">
 <meta property="article:tag" content="Static—Program-Analysis">
@@ -59,7 +59,7 @@
   isHome: false,
   isHighlightShrink: false,
   isToc: true,
-  postUpdate: '2023-04-13 19:32:22'
+  postUpdate: '2023-04-13 19:41:06'
 }</script><noscript><style type="text/css">
   #nav {
     opacity: 1
@@ -146,7 +146,7 @@
       }
     }
     detectApple()
-    })(window)</script><meta name="generator" content="Hexo 6.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">16</div></a><a href="/tags/"><div class="headline">Tags</div><div class="length-num">21</div></a><a href="/categories/"><div class="headline">Categories</div><div class="length-num">4</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Link</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('/img/banner/Apr.jpg')"><nav id="nav"><span id="blog-info"><a href="/" title="MMonster的小窝"><span class="site-name">MMonster的小窝</span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Link</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">静态程序分析(1)-控制流分析</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" datetime="2023-04-13T07:30:27.000Z" title="Created 2023-04-13 15:30:27">2023-04-13</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" datetime="2023-04-13T11:32:22.000Z" title="Updated 2023-04-13 19:32:22">2023-04-13</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Static-Program-Analysis/">Static-Program-Analysis</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">Word count:</span><span class="word-count">1k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">Reading time:</span><span>3min</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="静态程序分析(1)-控制流分析"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">Post View:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h2 id="前置知识：编译和中间表示"><a href="#前置知识：编译和中间表示" class="headerlink" title="前置知识：编译和中间表示"></a>前置知识：编译和中间表示</h2><p>在这里直接简略书写了：</p>
+    })(window)</script><meta name="generator" content="Hexo 6.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">16</div></a><a href="/tags/"><div class="headline">Tags</div><div class="length-num">21</div></a><a href="/categories/"><div class="headline">Categories</div><div class="length-num">4</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Link</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('/img/banner/Apr.jpg')"><nav id="nav"><span id="blog-info"><a href="/" title="MMonster的小窝"><span class="site-name">MMonster的小窝</span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Link</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">静态程序分析(1)-控制流分析</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" datetime="2023-04-13T07:30:27.000Z" title="Created 2023-04-13 15:30:27">2023-04-13</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" datetime="2023-04-13T11:41:06.000Z" title="Updated 2023-04-13 19:41:06">2023-04-13</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Static-Program-Analysis/">Static-Program-Analysis</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">Word count:</span><span class="word-count">1k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">Reading time:</span><span>3min</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="静态程序分析(1)-控制流分析"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">Post View:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h2 id="前置知识：编译和中间表示"><a href="#前置知识：编译和中间表示" class="headerlink" title="前置知识：编译和中间表示"></a>前置知识：编译和中间表示</h2><p>在这里直接简略书写了：</p>
 <ul>
 <li><p>编译器：将源码编译成机器码</p>
 </li>
@@ -193,7 +193,7 @@
 </blockquote>
 </li>
 <li><p>转移方程：$OUT[B] &#x3D; gen_B\cup(IN[B]-kill_B)$</p>
-<img src="img/SPA/image-20220628152914822.png" style="zoom:33%;" />
+<img src="https://mm0n5ter.github.io/img/SPA/image-20220628152914822.png" style="zoom:33%;" />
 </li>
 <li><p>控制流：$IN[B] &#x3D; \cup_{P\ a\ predecessor\ of\ B}OUT[P]$</p>
 </li>
@@ -201,10 +201,10 @@
 <h3 id="算法"><a href="#算法" class="headerlink" title="算法"></a>算法</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">OUT[entry] = Φ;</span><br><span class="line">for(each basic block B\entry)</span><br><span class="line">	OUT[B] = Φ;					## 此处may一般都为Φ，must一般都为top</span><br><span class="line">while(changes to any OUT occur)</span><br><span class="line">	for(each basic block B\entry)&#123;</span><br><span class="line">		控制流方程；</span><br><span class="line">		转移方程；</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
 
 <h3 id="栗子"><a href="#栗子" class="headerlink" title="栗子"></a>栗子</h3><p>图图如下：</p>
-<img src="img/SPA/image-20220628155533472.png" style="zoom:33%;" />
+<img src="https://mm0n5ter.github.io/img/SPA/image-20220628155533472.png" style="zoom:33%;" />
 
 <p>运行过程如下：</p>
-<img src="img/SPA/image-20220628160839274.png" style="zoom:33%;" />
+<img src="https://mm0n5ter.github.io/img/SPA/image-20220628160839274.png" style="zoom:33%;" />
 
 <h3 id="安全性分析"><a href="#安全性分析" class="headerlink" title="安全性分析"></a>安全性分析</h3><p><strong>此算法为单调算法，且有上界，则必然会达到不动点</strong></p>
 <h2 id="Live-Variables-Analysis"><a href="#Live-Variables-Analysis" class="headerlink" title="Live Variables Analysis"></a>Live Variables Analysis</h2><h3 id="基础概念"><a href="#基础概念" class="headerlink" title="基础概念"></a>基础概念</h3><ul>
@@ -223,14 +223,14 @@
 </li>
 <li><p>转移方程：$IN[B]&#x3D;use_B\cup[OUT[B]-def_B]$</p>
 <p>此处的use要求再define之前use</p>
-<p><img src="/img/old/image-20220701125550643.png"></p>
+<p><img src="/img/SPA/image-20220701125550643.png"></p>
 </li>
 </ul>
 <h3 id="算法-1"><a href="#算法-1" class="headerlink" title="算法"></a>算法</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">IN[exit] = Φ;</span><br><span class="line">for(each basic block B\exit)</span><br><span class="line">	IN[B] = Φ;</span><br><span class="line">while(changes to any IN occur)</span><br><span class="line">	for(each basic block B\exit)&#123;</span><br><span class="line">		控制流方程;</span><br><span class="line">		转移方程;</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
 
-<h3 id="栗子-1"><a href="#栗子-1" class="headerlink" title="栗子"></a>栗子</h3><img src="img/SPA/image-20220701130237308.png" style="zoom:33%;" />
+<h3 id="栗子-1"><a href="#栗子-1" class="headerlink" title="栗子"></a>栗子</h3><img src="https://mm0n5ter.github.io/img/SPA/image-20220701130237308.png" style="zoom:33%;" />
 
-<img src="img/SPA/image-20220701131402863.png" style="zoom:33%;" />
+<img src="https://mm0n5ter.github.io/img/SPA/image-20220701131402863.png" style="zoom:33%;" />
 
 <h2 id="Available-Expressions-Analysis"><a href="#Available-Expressions-Analysis" class="headerlink" title="Available Expressions Analysis"></a>Available Expressions Analysis</h2><h3 id="基础概念-1"><a href="#基础概念-1" class="headerlink" title="基础概念"></a>基础概念</h3><ul>
 <li><p>x + y 在 p 点可用的条件：从流图入口结点到达 p 的每条路径都对 x + y 求了值，且在最后一次求值之后<strong>再没有对 x 或 y 赋值</strong></p>
@@ -247,9 +247,9 @@
 </ul>
 <h3 id="算法-2"><a href="#算法-2" class="headerlink" title="算法"></a>算法</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">OUT[entry] = Φ;</span><br><span class="line">for(each basic block B\entry)</span><br><span class="line">	OUT[B] = U;</span><br><span class="line">while(changes to any OUT occur)</span><br><span class="line">	for(each basic block B\entry)&#123;</span><br><span class="line">		控制流;</span><br><span class="line">		转移方程;</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
 
-<h3 id="栗子-2"><a href="#栗子-2" class="headerlink" title="栗子"></a>栗子</h3><img src="img/SPA/image-20220702145741931.png" style="zoom:33%;" />
+<h3 id="栗子-2"><a href="#栗子-2" class="headerlink" title="栗子"></a>栗子</h3><img src="https://mm0n5ter.github.io/img/SPA/image-20220702145741931.png" style="zoom:33%;" />
 
-<img src="img/SPA/image-20220702150656186.png" style="zoom:33%;" />
+<img src="https://mm0n5ter.github.io/img/SPA/image-20220702150656186.png" style="zoom:33%;" />
 
 <h2 id="比较"><a href="#比较" class="headerlink" title="比较"></a>比较</h2><table>
 <thead>
