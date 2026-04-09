@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lattice Note 2 - MMonster的小窝</title>
+  <link rel="stylesheet" href="/blog/css/style.css">
+  <link rel="stylesheet" href="/blog/css/hljs.css">
+    <script>
+      MathJax = {
+        tex: { inlineMath: [['$','$'], ['\\(','\\)']], displayMath: [['$$','$$'], ['\\[','\\]']] },
+        svg: { fontCache: 'global' }
+      };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
+</head>
+<body>
+  <div class="bg-layer" style="background-image:url('/blog/bg/002.jpg')"></div>
+  
+  <nav class="top-nav" id="topNav">
+    <a href="/blog/">Home</a>
+    <a href="/blog/archives/">Archives</a>
+    <a href="/blog/tags/">Tags</a>
+    <a href="https://github.com/MM0n5Ter">GitHub</a>
+  </nav>
+  
+  <button class="hamburger" onclick="toggleSidebar()" aria-label="Menu">☰</button>
+  <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+  <div class="glass-container">
+    <div class="layout-flex">
+      <aside class="sidebar">
+        
+        <img src="/blog/img/avatar.png" alt="avatar" class="sidebar-avatar">
+        <div class="sidebar-name">MMonster</div>
+        <div class="sidebar-bio">Security · Code · Life</div>
+
+        <div class="sidebar-section">
+          <div class="sidebar-section-title">Archives</div>
+          <ul class="sidebar-list">
+          <li><a href="/blog/archives/#2025-06">2025-06<span class="count">(1)</span></a></li>
+          <li><a href="/blog/archives/#2023-04">2023-04<span class="count">(3)</span></a></li>
+          <li><a href="/blog/archives/#2023-03">2023-03<span class="count">(2)</span></a></li>
+          <li><a href="/blog/archives/#2021-11">2021-11<span class="count">(1)</span></a></li>
+          <li><a href="/blog/archives/#2021-07">2021-07<span class="count">(2)</span></a></li>
+          <li><a href="/blog/archives/#2021-05">2021-05<span class="count">(1)</span></a></li>
+          </ul>
+        </div>
+
+        <div class="sidebar-section">
+          <div class="sidebar-section-title">Tags</div>
+          <ul class="sidebar-list">
+          <li><a href="/blog/tags/#%E6%97%A7%E5%9C%B0%E7%8B%B1">旧地狱<span class="count">(10)</span></a></li>
+          <li><a href="/blog/tags/#Crypto">Crypto<span class="count">(9)</span></a></li>
+          <li><a href="/blog/tags/#Soot">Soot<span class="count">(3)</span></a></li>
+          <li><a href="/blog/tags/#Android">Android<span class="count">(3)</span></a></li>
+          <li><a href="/blog/tags/#Lattice">Lattice<span class="count">(3)</span></a></li>
+          <li><a href="/blog/tags/#Tools">Tools<span class="count">(2)</span></a></li>
+          <li><a href="/blog/tags/#RE">RE<span class="count">(2)</span></a></li>
+          <li><a href="/blog/tags/#Java">Java<span class="count">(2)</span></a></li>
+          <li><a href="/blog/tags/#%E6%9D%82%E8%B0%88">杂谈<span class="count">(2)</span></a></li>
+          <li><a href="/blog/tags/#ecc">ecc<span class="count">(2)</span></a></li>
+          <li><a href="/blog/tags/#Algorithm">Algorithm<span class="count">(1)</span></a></li>
+          <li><a href="/blog/tags/#Program%20Analysis">Program Analysis<span class="count">(1)</span></a></li>
+          </ul>
+        </div>
+      </aside>
+      <main class="content">
+        
+        <article>
+          <header class="post-header">
+            <h1>Lattice Note 2</h1>
+            <div class="post-meta">
+              <time>2021-03-30</time>
+               · 旧地狱
+              <div style="margin-top:4px"><span class="tag">Lattice</span> <span class="tag">Crypto</span> <span class="tag">旧地狱</span></div>
+            </div>
+          </header>
+          <div class="post-body">
+            <h2><strong>Lattice中的各种问题及其联系</strong></h2>
+<p><img loading="lazy" src="/blog/img/old/0.1.png" alt="0.1"></p>
+<h2>最短向量问题SVP</h2>
+<p>SVP问题的定义：给定一个基为<span class="math-inline">$B$</span>的格<span class="math-inline">$L$</span>，找到一个这个基构成的格点<span class="math-inline">$Bx$</span>，使得这个点到原点的距离最小。</p>
+<p><img loading="lazy" src="/blog/img/old/1.1.png" alt="1.1"></p>
+<p>在上图中，<span class="math-inline">$λ_1$</span>为最短向量，基<span class="math-inline">$B=[b_1,b_2]$</span>，我们可以找到一个点<span class="math-inline">$Bx$</span>，即<span class="math-inline">$5b_1-2b_2$</span>这个点，正好对应<span class="math-inline">$λ_1$</span>。需要注意的是，<span class="math-inline">$λ_1$</span>作为最短向量，<span class="math-inline">$Bx$</span>不可能比之还短，最多等于。</p>
+<p>当然，如果我们拿到的基不是很好，其实计算严格的SVP（即找出<span class="math-inline">$λ_1$</span>）是一个很难的事情，所以SVP这个问题也有个宽松的版本：<span class="math-inline">$SVP_γ$</span>。</p>
+<p>在<span class="math-inline">$SVP_γ$</span>中，问题的设定大致一样，但是唯一不一样的在于，我们找到的点<span class="math-inline">$Bx$</span>，并不一定需要恰好是最短向量<span class="math-inline">$λ_1$</span>，而只要满足小于等于<span class="math-inline">$λ_1$</span>的一个倍数<span class="math-inline">$γ$</span>就行了。</p>
+<h2>最近向量问题CVP</h2>
+<p>CVP问题的定义：在连续空间内任意给一点<span class="math-inline">$t$</span>，找距离这个点最近的格点<span class="math-inline">$Bx$</span>。</p>
+<p><img loading="lazy" src="/blog/img/old/2.1.png" alt="2.1">
+<div class="math-display">$
+||Bx||\leλ
+$</div>
+此处的<span class="math-inline">$λ$</span>即指覆盖半径。同理可得，CVP也有一个宽松版本<span class="math-inline">$CVP_γ$</span>。</p>
+<h2>两种CVP问题</h2>
+<p>给定一个格<span class="math-inline">$L$</span>，与一个随机点<span class="math-inline">$t$</span>还有搜索距离<span class="math-inline">$d$</span>，并且假设<span class="math-inline">$μ(t,L)≤d$</span>，CVP问题是让我们找到一个合理的格点<span class="math-inline">$Bx∈L$</span>并且这个点到<span class="math-inline">$t$</span>的距离小于等于<span class="math-inline">$d$</span>。</p>
+<p>CVP问题对于搜索的范围和结果的大小已经有所约束了，但是并没有约束一共有多少结果和范围究竟有多大。所以CVP问题又可以细分为两种主要的版本。</p>
+<h4>BDD（Bounded Distance Decoding）问题</h4>
+<p>BDD问题规定了<span class="math-inline">$d<λ1(L)/2$</span>，也就是说<span class="math-inline">$d$</span>小于最短向量的一半。并且这个CVP问题最多只有一个唯一的解，并且这个解一定是距离<span class="math-inline">$t$</span>最近的格点。</p>
+<h4>ADD（Absolute Distance Decoding）问题</h4>
+<p>ADD问题则不同，规定了<span class="math-inline">$d≥μ(L)$</span>，也就是说<span class="math-inline">$d$</span>大于整个格的覆盖半径了。这个时候，这个CVP问题至少会有一个解，但是我们找到的解并不一定是距离<span class="math-inline">$t$</span>最近的格点。</p>
+<h2>最短独立向量问题SIVP</h2>
+<p>SIVP问题的定义：给定一个格<span class="math-inline">$L(B)$</span>，找到<span class="math-inline">$n$</span>个线性独立的向量<span class="math-inline">$Bx_1,…,Bx_n$</span>并且这些向量的长度都要小于等于最长的最短向量<span class="math-inline">$λ_n$</span>。</p>
+<p><img loading="lazy" src="/blog/img/old/3.1.png" alt="3.1"></p>
+<p>这个图就很好的表达了在<span class="math-inline">$n=2$</span>的情况下，我们找到了两个小于等于<span class="math-inline">$λ_2$</span>的点。和SVP与CVP问题一样，我们也可以给出SIVP问题的宽松版定义，即<span class="math-inline">$SIVP_γ$</span>。在宽松版本中，我们只需要找到<span class="math-inline">$γλ_n$</span>范围内的就可以了。</p>
+<blockquote>
+<p>人类就是懒哒😏</p>
+</blockquote>
+<h2>基于Lattice的信息传输</h2>
+<p>首先，我们把需要传输的消息映射到Lattice中的一个点上，即<span class="math-inline">$Bx$</span>，然后我们把<span class="math-inline">$L$</span>,<span class="math-inline">$Bx$</span>发送出去。在接收端我们得到的数据会产生一定程度的偏移，在图上反馈出来就是偏移到了<span class="math-inline">$t$</span>这个点上。我们只需要解决CVP问题，就可以找到原本的格点<span class="math-inline">$Bx$</span>，然后就可以还原出<span class="math-inline">$m$</span>了。</p>
+<p><img loading="lazy" src="/blog/img/old/2.4.1.png" alt="4.1"></p>
+<p>在解决CVP问题的时候，我们还需要知道这个Lattice中最短向量<span class="math-inline">$λ_1$</span>的值来判断CVP问题是不是能够求解出原本的那个点<span class="math-inline">$Bx$</span>。我们需要通过求解SVP问题来得到<span class="math-inline">$λ_1$</span>。</p>
+<p>最后，SIVP问题在这里也有所适用。如果我们在传输的过程中为了压缩数据使用了向量量化（Vector Quantization）的方法，在重建向量的时候，需要用到SIVP的解来修复误差。</p>
+<h2>将ADD问题归约到SIVP问题上</h2>
+<p>假设我们需要求解ADD(L,t)，我们可以首先用SIVP算法得到这个Lattice的n个独立最短向量V=SIVP(L)。一旦得到了V之后，我们就可以选取这些向量作为基，平分整个多维空间<span class="math-inline">$R_n$</span>。然后我们只需要看t在那个分区中，然后向上或者向下取整一下，找到那个分区对应的格点，就是我们ADD问题的解了。</p>
+<p><img loading="lazy" src="/blog/img/old/5.1.png" alt="5.1"></p>
+<p>因为我们是使用了取整的操作来找到格点的，所以这个解的格点到tt的距离，我们也可以找到一个最大的上限，即：
+<div class="math-display">$
+∑_i\frac12||v_i||≤(n/2)λ_n≤nμ
+$</div></p>
+<p><del>其实我还不是很懂，人麻了</del></p>
+
+          </div>
+        </article>
+      </main>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    © 2026 MMonster
+  </footer>
+
+  <script>
+    function toggleSidebar() {
+      document.querySelector('.sidebar').classList.toggle('sidebar-open');
+      document.querySelector('.sidebar-overlay').classList.toggle('active');
+    }
+    // Top nav: scrolled style + hide on scroll down, show on scroll up
+    (function() {
+      var nav = document.getElementById('topNav');
+      if (!nav) return;
+      var lastY = 0;
+      window.addEventListener('scroll', function() {
+        var y = window.scrollY;
+        nav.classList.toggle('scrolled', y > 100);
+        if (y > window.innerHeight * 0.8) {
+          nav.classList.toggle('nav-hidden', y > lastY);
+        } else {
+          nav.classList.remove('nav-hidden');
+        }
+        lastY = y;
+      });
+    })();
+  </script>
+</body>
+</html>

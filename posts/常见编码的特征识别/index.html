@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>常见编码的特征识别 - MMonster的小窝</title>
+  <link rel="stylesheet" href="/blog/css/style.css">
+  <link rel="stylesheet" href="/blog/css/hljs.css">
+</head>
+<body>
+  <div class="bg-layer" style="background-image:url('/blog/bg/002.jpg')"></div>
+  
+  <nav class="top-nav" id="topNav">
+    <a href="/blog/">Home</a>
+    <a href="/blog/archives/">Archives</a>
+    <a href="/blog/tags/">Tags</a>
+    <a href="https://github.com/MM0n5Ter">GitHub</a>
+  </nav>
+  
+  <button class="hamburger" onclick="toggleSidebar()" aria-label="Menu">☰</button>
+  <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+  <div class="glass-container">
+    <div class="layout-flex">
+      <aside class="sidebar">
+        
+        <img src="/blog/img/avatar.png" alt="avatar" class="sidebar-avatar">
+        <div class="sidebar-name">MMonster</div>
+        <div class="sidebar-bio">Security · Code · Life</div>
+
+        <div class="sidebar-section">
+          <div class="sidebar-section-title">Archives</div>
+          <ul class="sidebar-list">
+          <li><a href="/blog/archives/#2025-06">2025-06<span class="count">(1)</span></a></li>
+          <li><a href="/blog/archives/#2023-04">2023-04<span class="count">(3)</span></a></li>
+          <li><a href="/blog/archives/#2023-03">2023-03<span class="count">(2)</span></a></li>
+          <li><a href="/blog/archives/#2021-11">2021-11<span class="count">(1)</span></a></li>
+          <li><a href="/blog/archives/#2021-07">2021-07<span class="count">(2)</span></a></li>
+          <li><a href="/blog/archives/#2021-05">2021-05<span class="count">(1)</span></a></li>
+          </ul>
+        </div>
+
+        <div class="sidebar-section">
+          <div class="sidebar-section-title">Tags</div>
+          <ul class="sidebar-list">
+          <li><a href="/blog/tags/#%E6%97%A7%E5%9C%B0%E7%8B%B1">旧地狱<span class="count">(10)</span></a></li>
+          <li><a href="/blog/tags/#Crypto">Crypto<span class="count">(9)</span></a></li>
+          <li><a href="/blog/tags/#Soot">Soot<span class="count">(3)</span></a></li>
+          <li><a href="/blog/tags/#Android">Android<span class="count">(3)</span></a></li>
+          <li><a href="/blog/tags/#Lattice">Lattice<span class="count">(3)</span></a></li>
+          <li><a href="/blog/tags/#Tools">Tools<span class="count">(2)</span></a></li>
+          <li><a href="/blog/tags/#RE">RE<span class="count">(2)</span></a></li>
+          <li><a href="/blog/tags/#Java">Java<span class="count">(2)</span></a></li>
+          <li><a href="/blog/tags/#%E6%9D%82%E8%B0%88">杂谈<span class="count">(2)</span></a></li>
+          <li><a href="/blog/tags/#ecc">ecc<span class="count">(2)</span></a></li>
+          <li><a href="/blog/tags/#Algorithm">Algorithm<span class="count">(1)</span></a></li>
+          <li><a href="/blog/tags/#Program%20Analysis">Program Analysis<span class="count">(1)</span></a></li>
+          </ul>
+        </div>
+      </aside>
+      <main class="content">
+        
+        <article>
+          <header class="post-header">
+            <h1>常见编码的特征识别</h1>
+            <div class="post-meta">
+              <time>2021-03-19</time>
+               · 旧地狱
+              
+            </div>
+          </header>
+          <div class="post-body">
+            <h2><strong>Base家族</strong></h2>
+<ul>
+<li><p><strong>Base32</strong> 由（A-Z、2-7）32个可见字符构成，“=”符号用作后缀填充。长度为4的倍数。同时，<strong>明文超过十个后面就会有很多等号</strong>。</p>
+<p>举个例子：base32（1234567）= GEZDGNBVGY3Q====</p>
+</li>
+<li><p><strong>Base64</strong> 由（A-Z、a-z、0-9、+、/）64个可见字符构成，“=”符号用作后缀填充。长度为4的倍数。</p>
+<p>举个例子：base64（1234567）= MTIzNDU2Nw==</p>
+</li>
+<li><p><strong>Base58</strong> 相比Base64，Base58不使用数字&quot;0&quot;，字母大写&quot;O&quot;，字母大写&quot;I&quot;，和字母小写&quot;l&quot;，以及&quot;+“和”/&quot;符号。最主要是<strong>没有等号</strong>。可以理解为一种58进制。</p>
+<p>举个例子：base58（1234567） = 2s8YYFs4Vc</p>
+</li>
+<li><p><strong>Base16</strong> 看起来像16进制，特点是<strong>没有等号并且数字要多于字母</strong></p>
+<p>举个例子：base16（1234567） = 31323334353637</p>
+</li>
+<li><p><strong>Base85</strong> 奇怪的符号很多但很难出现等号</p>
+<p>举个栗子：base85（1234567） = 0etOA2)[A</p>
+</li>
+<li><p><strong>Base100</strong> 特点：<strong>就emoji</strong></p>
+<p>举个粒子：base100（1234567） = 🐨🐩🐪🐫🐬🐭🐮</p>
+</li>
+</ul>
+<hr>
+<h2><strong>Unicode、HTML实体编码、16进制Unicode</strong></h2>
+<ol>
+<li>Unicode和HTML实体编码（<strong>基本</strong>）是一个东西，<strong>特征：以&amp;#开头，加上5位十进制（汉字），3位十进制（字母），2位十进制（数字符号）</strong></li>
+<li>HTML实体编码：用一个编号写入HTML代码中来代替一个字符</li>
+<li>16进制Unicode，<strong>特征：以\u开头，加上四位16进制</strong></li>
+<li><strong>常用解密网站</strong><ul>
+<li>Unicode：<a href="https://www.sojson.com/unicode.html">www.sojson.com</a></li>
+<li>16进制Unicode：<a href="http://www.msxindl.com/tools/unicode16.asp">www.msxindl.com</a></li>
+<li>HTML字符实体：<a href="https://www.qqxiuzi.cn/bianma/zifushiti.php">www.qqxiuzi.cn</a></li>
+</ul>
+</li>
+</ol>
+<hr>
+<h2><strong>URL、Hex</strong></h2>
+<p><strong>这两种加密的密文是一样的，不同的是当你用url编码网站时是不会把http进行编码的，而Hex编码则全部转化了</strong></p>
+<p>特点：带**%**</p>
+<p> <strong>常用解密网站：</strong></p>
+<ul>
+<li><p>Hex编码：<a href="https://www.107000.com/T-Hex">https://www.107000.com/T-Hex</a> </p>
+</li>
+<li><p>URL 编码：<a href="https://www.sojson.com/encodeurl.html">https://www.sojson.com/encodeurl.html</a></p>
+</li>
+</ul>
+<hr>
+<h2><strong>文本隐藏加密、零宽隐写</strong></h2>
+<ol>
+<li><p>文本隐藏加密：加密过的密文会比原文的字节数多，当你按删除键的时候会发现某一处要按好多下才能把前面的字删掉</p>
+</li>
+<li><p>零宽隐写：解密后明文与密文会分开显示，密文一般隐藏在第一个字后面</p>
+</li>
+<li><p>常用解密网站：
+ 文本隐藏加密：<a href="http://www.qqxiuzi.cn">www.qqxiuzi.cn</a>
+ 零宽隐写：yuanfux.github.io</p>
+</li>
+</ol>
+<hr>
+<h2><strong>特殊暗号类加密</strong></h2>
+<p>这类加密都是特征性比较强的，易辨别</p>
+<h4><strong>1、猪圈密码</strong></h4>
+<p><strong>特点：只能对字母加解密并且符号无法复制，粘贴后会直接显示明文</strong></p>
+<p>字母表：懒得放图</p>
+<p>解密网站：<a href="http://www.metools.info/code/c90.html">http://www.metools.info/code/c90.html</a></p>
+<h4><strong>2、与佛论禅</strong></h4>
+<p><strong>特点：就是看不懂的佛言</strong></p>
+<p>解密网站：<a href="http://www.keyfc.net/bbs/tools/tudoucode.aspx">http://www.keyfc.net/bbs/tools/tudoucode.aspx</a></p>
+<h4><strong>3、百家姓暗号</strong></h4>
+<p><strong>特点：乱七八糟百家姓</strong></p>
+<p>解密网站：<a href="https://www.ahz0.com/bjx.html">https://www.ahz0.com/bjx.html</a></p>
+<h4><strong>4、卡尔达诺栅格码</strong></h4>
+<p><strong>特点：把明文伪装成垃圾邮件。。。</strong></p>
+<p>解密网站：<a href="https://www.spammimic.com/">https://www.spammimic.com/</a></p>
+<h4><strong>5、摩尔斯电码</strong></h4>
+<p>太常见了，<del>懒得写orz</del></p>
+<h4><strong>6、Quoted-Printable</strong></h4>
+<p><strong>这种编码常用与邮件处理，只能对汉字进行编码，特征是=加两个大写字母或数字组合</strong></p>
+<p>解密网站：<a href="http://www.mxcz.net/tools/QuotedPrintable.aspx">http://www.mxcz.net/tools/QuotedPrintable.aspx</a></p>
+<h4><strong>7、ROT13</strong></h4>
+<p>是一种凯撒密码的变体，只不过比较简单，一般用来加密F***word</p>
+<p>解密网站：<a href="http://www.mxcz.net/tools/rot13.aspx">http://www.mxcz.net/tools/rot13.aspx</a></p>
+<h4><strong>8、奇妙的文本加密</strong></h4>
+<p>这玩意儿可以加密成：汉字 数字 字母 音乐符号 国际音标 盲文 韩文 日文 傣文 彝文 俄文 箭头符号 花朵符号</p>
+<p>最后会带俩等号</p>
+<p>解密网站：<a href="https://www.qqxiuzi.cn/bianma/wenbenjiami.php">https://www.qqxiuzi.cn/bianma/wenbenjiami.php</a></p>
+<hr>
+<h2><strong>JS加密</strong></h2>
+<h4>1. Js<u>颜文字</u>加密，可直接F12</h4>
+<h4>2. Jother</h4>
+<p>只用<code>! + ( ) [ ] { }</code>，可直接F12</p>
+<h4>3. JSfuck</h4>
+<p>只用<code>! + ( ) [ ]</code>，解密网站：<a href="http://www.jsfuck.com/">http://www.jsfuck.com/</a></p>
+<h2><strong>散列/哈希</strong>（因为这个沙雕主题的列表很难看所以放在最后）</h2>
+<p>一般这种加密算法长得很像，字符串均由“0-9”、“A-Z”组成，唯一的区别在于长度。（一般这种编码无法解密</p>
+<table>
+<thead>
+<tr>
+<th>算法</th>
+<th>长度</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>md5</td>
+<td>32/16</td>
+</tr>
+<tr>
+<td>sha1</td>
+<td>40</td>
+</tr>
+<tr>
+<td>sha256</td>
+<td>64</td>
+</tr>
+<tr>
+<td>sha512</td>
+<td>128</td>
+</tr>
+<tr>
+<td>adler32</td>
+<td>8</td>
+</tr>
+<tr>
+<td>crc32</td>
+<td>8</td>
+</tr>
+<tr>
+<td>crc32b</td>
+<td>8</td>
+</tr>
+<tr>
+<td>fnv132</td>
+<td>8</td>
+</tr>
+<tr>
+<td>fnv164</td>
+<td>16</td>
+</tr>
+<tr>
+<td>fnv1a32</td>
+<td>8</td>
+</tr>
+<tr>
+<td>fnv1a64</td>
+<td>16</td>
+</tr>
+<tr>
+<td>gost</td>
+<td>64</td>
+</tr>
+<tr>
+<td>gost-crypto</td>
+<td>64</td>
+</tr>
+<tr>
+<td>haval128,3</td>
+<td>32</td>
+</tr>
+<tr>
+<td>haval128,4</td>
+<td>32</td>
+</tr>
+<tr>
+<td>haval128,5</td>
+<td>32</td>
+</tr>
+<tr>
+<td>haval160,3</td>
+<td>40</td>
+</tr>
+<tr>
+<td>haval160,4</td>
+<td>40</td>
+</tr>
+<tr>
+<td>haval160,5</td>
+<td>40</td>
+</tr>
+<tr>
+<td>haval192,3</td>
+<td>48</td>
+</tr>
+<tr>
+<td>haval192,4</td>
+<td>48</td>
+</tr>
+<tr>
+<td>haval192,5</td>
+<td>48</td>
+</tr>
+<tr>
+<td>haval224,3</td>
+<td>56</td>
+</tr>
+<tr>
+<td>haval224,4</td>
+<td>56</td>
+</tr>
+<tr>
+<td>haval224,5</td>
+<td>56</td>
+</tr>
+<tr>
+<td>haval256,3</td>
+<td>64</td>
+</tr>
+<tr>
+<td>haval256,4</td>
+<td>64</td>
+</tr>
+<tr>
+<td>haval256,5</td>
+<td>64</td>
+</tr>
+<tr>
+<td>joaat</td>
+<td>8</td>
+</tr>
+<tr>
+<td>md2</td>
+<td>32</td>
+</tr>
+<tr>
+<td>md4</td>
+<td>32</td>
+</tr>
+<tr>
+<td>ripemd128</td>
+<td>32</td>
+</tr>
+<tr>
+<td>ripemd160</td>
+<td>40</td>
+</tr>
+<tr>
+<td>ripemd256</td>
+<td>64</td>
+</tr>
+<tr>
+<td>ripemd320</td>
+<td>80</td>
+</tr>
+<tr>
+<td>sha224</td>
+<td>56</td>
+</tr>
+<tr>
+<td>sha3-224</td>
+<td>56</td>
+</tr>
+<tr>
+<td>sha3-256</td>
+<td>64</td>
+</tr>
+<tr>
+<td>sha3-384</td>
+<td>96</td>
+</tr>
+<tr>
+<td>sha3-512</td>
+<td>128</td>
+</tr>
+<tr>
+<td>sha512/224</td>
+<td>56</td>
+</tr>
+<tr>
+<td>sha512/256</td>
+<td>64</td>
+</tr>
+<tr>
+<td>snefru</td>
+<td>64</td>
+</tr>
+<tr>
+<td>snefru256</td>
+<td>64</td>
+</tr>
+<tr>
+<td>tiger128,3</td>
+<td>32</td>
+</tr>
+<tr>
+<td>tiger128,4</td>
+<td>32</td>
+</tr>
+<tr>
+<td>tiger160,3</td>
+<td>40</td>
+</tr>
+<tr>
+<td>tiger160,4</td>
+<td>40</td>
+</tr>
+<tr>
+<td>tiger192,3</td>
+<td>48</td>
+</tr>
+<tr>
+<td>tiger192,4</td>
+<td>48</td>
+</tr>
+<tr>
+<td>whirlpool</td>
+<td>128</td>
+</tr>
+<tr>
+<td>mysql</td>
+<td>16位，且第1位和第7位必须为0-8</td>
+</tr>
+<tr>
+<td>mysql5</td>
+<td>40</td>
+</tr>
+<tr>
+<td>NTLM</td>
+<td>32</td>
+</tr>
+<tr>
+<td>Domain Cached Credentials</td>
+<td>32</td>
+</tr>
+</tbody></table>
+
+          </div>
+        </article>
+      </main>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    © 2026 MMonster
+  </footer>
+
+  <script>
+    function toggleSidebar() {
+      document.querySelector('.sidebar').classList.toggle('sidebar-open');
+      document.querySelector('.sidebar-overlay').classList.toggle('active');
+    }
+    // Top nav: scrolled style + hide on scroll down, show on scroll up
+    (function() {
+      var nav = document.getElementById('topNav');
+      if (!nav) return;
+      var lastY = 0;
+      window.addEventListener('scroll', function() {
+        var y = window.scrollY;
+        nav.classList.toggle('scrolled', y > 100);
+        if (y > window.innerHeight * 0.8) {
+          nav.classList.toggle('nav-hidden', y > lastY);
+        } else {
+          nav.classList.remove('nav-hidden');
+        }
+        lastY = y;
+      });
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lattice Note 1 - MMonster的小窝</title>
+  <link rel="stylesheet" href="/blog/css/style.css">
+  <link rel="stylesheet" href="/blog/css/hljs.css">
+    <script>
+      MathJax = {
+        tex: { inlineMath: [['$','$'], ['\\(','\\)']], displayMath: [['$$','$$'], ['\\[','\\]']] },
+        svg: { fontCache: 'global' }
+      };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
+</head>
+<body>
+  <div class="bg-layer" style="background-image:url('/blog/bg/002.jpg')"></div>
+  
+  <nav class="top-nav" id="topNav">
+    <a href="/blog/">Home</a>
+    <a href="/blog/archives/">Archives</a>
+    <a href="/blog/tags/">Tags</a>
+    <a href="https://github.com/MM0n5Ter">GitHub</a>
+  </nav>
+  
+  <button class="hamburger" onclick="toggleSidebar()" aria-label="Menu">☰</button>
+  <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+  <div class="glass-container">
+    <div class="layout-flex">
+      <aside class="sidebar">
+        
+        <img src="/blog/img/avatar.png" alt="avatar" class="sidebar-avatar">
+        <div class="sidebar-name">MMonster</div>
+        <div class="sidebar-bio">Security · Code · Life</div>
+
+        <div class="sidebar-section">
+          <div class="sidebar-section-title">Archives</div>
+          <ul class="sidebar-list">
+          <li><a href="/blog/archives/#2025-06">2025-06<span class="count">(1)</span></a></li>
+          <li><a href="/blog/archives/#2023-04">2023-04<span class="count">(3)</span></a></li>
+          <li><a href="/blog/archives/#2023-03">2023-03<span class="count">(2)</span></a></li>
+          <li><a href="/blog/archives/#2021-11">2021-11<span class="count">(1)</span></a></li>
+          <li><a href="/blog/archives/#2021-07">2021-07<span class="count">(2)</span></a></li>
+          <li><a href="/blog/archives/#2021-05">2021-05<span class="count">(1)</span></a></li>
+          </ul>
+        </div>
+
+        <div class="sidebar-section">
+          <div class="sidebar-section-title">Tags</div>
+          <ul class="sidebar-list">
+          <li><a href="/blog/tags/#%E6%97%A7%E5%9C%B0%E7%8B%B1">旧地狱<span class="count">(10)</span></a></li>
+          <li><a href="/blog/tags/#Crypto">Crypto<span class="count">(9)</span></a></li>
+          <li><a href="/blog/tags/#Soot">Soot<span class="count">(3)</span></a></li>
+          <li><a href="/blog/tags/#Android">Android<span class="count">(3)</span></a></li>
+          <li><a href="/blog/tags/#Lattice">Lattice<span class="count">(3)</span></a></li>
+          <li><a href="/blog/tags/#Tools">Tools<span class="count">(2)</span></a></li>
+          <li><a href="/blog/tags/#RE">RE<span class="count">(2)</span></a></li>
+          <li><a href="/blog/tags/#Java">Java<span class="count">(2)</span></a></li>
+          <li><a href="/blog/tags/#%E6%9D%82%E8%B0%88">杂谈<span class="count">(2)</span></a></li>
+          <li><a href="/blog/tags/#ecc">ecc<span class="count">(2)</span></a></li>
+          <li><a href="/blog/tags/#Algorithm">Algorithm<span class="count">(1)</span></a></li>
+          <li><a href="/blog/tags/#Program%20Analysis">Program Analysis<span class="count">(1)</span></a></li>
+          </ul>
+        </div>
+      </aside>
+      <main class="content">
+        
+        <article>
+          <header class="post-header">
+            <h1>Lattice Note 1</h1>
+            <div class="post-meta">
+              <time>2021-03-26</time>
+               · 旧地狱
+              <div style="margin-top:4px"><span class="tag">Lattice</span> <span class="tag">Crypto</span> <span class="tag">旧地狱</span></div>
+            </div>
+          </header>
+          <div class="post-body">
+            <p>因为之前用了大量的coppersmith和要自造格子的题，觉得继续摸鱼<del>抄脚本</del>已经没有前途了</p>
+<p>(&#96;ヮ´ )σ&#96;∀´) ﾟ∀ﾟ)σ   “就我还不会格密码┭┮﹏┭┮”</p>
+<p>所以决定开始系统学习一下</p>
+<h2>Lattice的历史</h2>
+<p>Lattice（格）在很早以前就被各大数学家研究了一遍。代表人物有Lagrange，Gauss和Minkowski等等。最近的几十年内，Lattice在密码学、通讯、密码分析上有了很大的应用价值，是非常火的一个领域。</p>
+<p>近代Lattice时间线：</p>
+<ul>
+<li>1982：LLL basis reduction theorem<ul>
+<li>使用Lattice来做Cryptanalysis</li>
+</ul>
+</li>
+<li>1996：Ajtai-Dwork<ul>
+<li>第一次把Lattice中Average-case与Worst-case的复杂度问题关联起来
+提出了使用Lattice构造的One-way Function与CRHF（Collision Resistant Hash Function）</li>
+</ul>
+</li>
+<li>2002：找到了Average-case/worst-case复杂度之间的关系，基于Lattice的协议变得更加高效</li>
+<li>2005：Regev提出了LWE，并且发现其量子抵抗性<ul>
+<li>提出PKE，IBE，ABE，FHE等等的可能性</li>
+</ul>
+</li>
+</ul>
+<h2>Lattice是什么</h2>
+<p>个人理解，Lattice（格）就是一个n维空间<span class="math-inline">$\mathbb{R}^n$</span>，而这个空间是由规律分布的、离散的点构成的。</p>
+<p>最简单的Lattice就是Integer Lattice（整数格）。整数格中最简单的就是基于笛卡尔坐标系的基底<span class="math-inline">$\vec{e_1}$</span>,<span class="math-inline">$\vec{e_2}$</span>······组成的格。</p>
+<p>接下来就是完全类比于线性代数中的n维空间，（线代没学好的哭哭咧😣</p>
+<p>而这个“n维空间”的一组基向量就可以称为这个格的<strong>基</strong>。</p>
+<p>如果系统性的定义一下Lattice的话，那么我们可以说Lattice是<span class="math-inline">$\mathbb{R}^n$</span>这个空间中的一个离散的、具有加法运算的子群（A discrete additive subgroup）。</p>
+<p>同时，格和基完全满足线性代数中的线性变换。</p>
+<h2>Lattice的一些基本性质</h2>
+<p>我们知道，在一个线性空间里面，一个空间<span class="math-inline">$V$</span>的Determinant（行列式）<span class="math-inline">$det(V)$</span>代表了这个空间所有的基向量<span class="math-inline">$b_i$</span>所组成的几何体的体积。在二维空间里，两个基向量<span class="math-inline">$b_1$</span>,<span class="math-inline">$b_2$</span>组成的平行四边形的面积就是这个空间的Determinant。</p>
+<p>这个性质完全适用于Lattice，对于n维完全类比。</p>
+<p>值得注意的是，无论我们怎么更换基向量，Determinant的大小，即基向量组成的多面体的体积是相同的。给定任意的一组基向量，我们都可以有效的找到这个Lattice空间的Determinant。</p>
+<h2>Lattice的密度</h2>
+<p>我们可以用一个Lattice的Determinant来衡量这个格的点阵分布的密度。</p>
+<p>首先，我们把上一部分基向量组成的多面体的中心挪到原点上来。这样，空间<span class="math-inline">$P$</span>仍然保持相同的体积。</p>
+<p>随后，我们可以把这个多面体复制多份，然后平移到每一个Lattice中的点上。这样我们就会得到很多份<span class="math-inline">$P$</span>，并且这些多面体可以平分整个多维空间<span class="math-inline">$\mathbb{R}^n$</span>。</p>
+<p><img loading="lazy" src="/blog/img/old/4.1.png" alt="4.1"></p>
+<p>此时，我们如果在这个空间中任意的画一个球体（多维空间即超球体），然后可以数数看这个球体中覆盖了多少Lattice里的点。点的数量平均于球体的体积，就是这个格的密度了。</p>
+<h2>最短距离</h2>
+<p>我们一般用<span class="math-inline">$λ_1$</span>来定义整个格中点与点之间最短的距离。一般为了方便理解，我们就把其中的一个点设置成坐标轴0点，然后<span class="math-inline">$λ_1$</span>就变成了距离<span class="math-inline">$O$</span>点距离最近的格点。</p>
+<p>而这些<span class="math-inline">$λ$</span>需要遵守一个非常简单的规则：
+<div class="math-display">$
+λ_1\leλ_2\leλ_3\le\cdots\cdots\leλ_n
+$</div>
+一个特殊的例子就是笛卡尔坐标系下的整数格<span class="math-inline">$\mathbb{Z}^n$</span>，因为所有的基向量全部都长度相等，并且相互垂直，所以<span class="math-inline">$λ_1=λ_2=⋯=λ_n=1$</span>。</p>
+<h2>距离函数和覆盖半径</h2>
+<p>给定任意的点<span class="math-inline">$t$</span>（可以不在格点上），定义距离函数<span class="math-inline">$μ(t,L)$</span>为这个点到最近格点的距离。</p>
+<p>我们可以左右移动这个点<span class="math-inline">$t$</span>，就可以得到这个格中最大的<span class="math-inline">$μ$</span>，称之为覆盖半径。</p>
+<p>据二维笛卡尔坐标系为例，则为向量<span class="math-inline">$i$</span>,<span class="math-inline">$j$</span>,<span class="math-inline">$i-j$</span>所围成的三角形的外接圆半径。</p>
+<p><img loading="lazy" src="/blog/img/old/6.1.png" alt="6.1"></p>
+<p>从另一方面理解覆盖半径，即为在每一格点作圆（三维及以上类比），不断增大圆的半径，圆与圆之间的空隙也就不断缩小，直到半径等于覆盖半径时，整个空间完全被覆盖。</p>
+<p><img loading="lazy" src="/blog/img/old/6.2.png" alt="6.2">
+<img loading="lazy" src="/blog/img/old/6.3.png" alt="6.3"></p>
+<h2>Lattice的光滑化</h2>
+<p>在上一个概念中，将作圆改为叠加一个圆形的随机噪声，在圆的半径达到覆盖半径之前，空间上都会有空白区域，但在达到覆盖半径之后，因为圆和圆之间会有重叠部分，所以噪声分布很不均匀，这时就需要对其进行光滑化。值得注意的是，要获得最光滑的空间，我们的半径要无限大，即一个圆能覆盖整个空间，这样的构造是无意义的。</p>
+<p>所以<del>我们规定</del>一定要有一个<del>巫妖王</del>光滑化半径的上限
+<div class="math-display">$
+||r||\le log(n)·\sqrt{n}λ_n
+$</div></p>
+<h2>Minkowski凸集定理（Convex body theorem）</h2>
+<p>二维即为高中数竞所学的闵可夫斯基定理，主要理解其高维意义：</p>
+<p>在多维空间内有一个凸集<span class="math-inline">$C$</span>，令其包含原点。若<span class="math-inline">$vol(C)>2^n$</span>，则这个凸集必含有异于原点的一个格点。</p>
+<p>在整数格<span class="math-inline">$\mathbb{Z}^n$</span>中非常好理解，因为以原点出发到所有下一个点这段距离构成的空间，恰好就是<span class="math-inline">$2^n$</span>，所以说任何凸集（集合的表面不能有凹陷）只要体积大于<span class="math-inline">$2^n$</span>，那就一定会溢出这段空间，进而覆盖某个非0的格点。通过Pigeonhole Principle（鸽子洞原理）<del>就是抽屉原理哒</del>就可以很生动的理解了。</p>
+<p>然后通过线性变换将整数格变为新格，该定理仍然成立。</p>
+<p>Minkowski定理最重要的用处就是给出一个Lattice中最短向量的一个上限值。
+<div class="math-display">$
+λ_1(L)≤\sqrt{n}r=\sqrt{n}det(L)^{1/n}
+$</div>
+理解：如果把这个Lattice的Determinant对应的空间压缩成一个立方体，那么这个立方体的对角线长度就是<span class="math-inline">$\sqrt{n}r$</span>。因为对角线的另一头就是下一个格点了（但不一定是最近的格点），所以<span class="math-inline">$λ_1$</span>肯定要小于等于这个对角线的长度。</p>
+<h2>Minkowski第二定理</h2>
+<p>Minkowski第二定理给出了对于其他短向量<span class="math-inline">$λ_i$</span>的一个取值上限。
+<div class="math-display">$
+λ_1(L)\le\left(\prod_iλ_i(L)\right)^{1/n}\le\sqrt{n}·det(L)^{1/n}
+$</div>
+第二定理指出，全部<span class="math-inline">$n$</span>个最短向量的几何平均数，一定会小于等于我们之前给出的<span class="math-inline">$\sqrt{n}r$</span>这个对角线的长度。这个其实就是对于上面我们说的把一个任意的Determinant对应的空间压缩成一个等边长的立方体的话，对角线就是<span class="math-inline">$\sqrt{n}r$</span>这么长。然而现实中一个任意Lattice的Determinant空间是一个不规则的Parallelepiped，所以边长肯定各不相同。但是因为体积是一样的，所以我们用几何平均数的方法就可以很好的约束这个Parallelpiped每个边的长度。</p>
+
+          </div>
+        </article>
+      </main>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    © 2026 MMonster
+  </footer>
+
+  <script>
+    function toggleSidebar() {
+      document.querySelector('.sidebar').classList.toggle('sidebar-open');
+      document.querySelector('.sidebar-overlay').classList.toggle('active');
+    }
+    // Top nav: scrolled style + hide on scroll down, show on scroll up
+    (function() {
+      var nav = document.getElementById('topNav');
+      if (!nav) return;
+      var lastY = 0;
+      window.addEventListener('scroll', function() {
+        var y = window.scrollY;
+        nav.classList.toggle('scrolled', y > 100);
+        if (y > window.innerHeight * 0.8) {
+          nav.classList.toggle('nav-hidden', y > lastY);
+        } else {
+          nav.classList.remove('nav-hidden');
+        }
+        lastY = y;
+      });
+    })();
+  </script>
+</body>
+</html>

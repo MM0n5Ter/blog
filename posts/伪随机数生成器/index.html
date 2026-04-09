@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>伪随机数生成器 - MMonster的小窝</title>
+  <link rel="stylesheet" href="/blog/css/style.css">
+  <link rel="stylesheet" href="/blog/css/hljs.css">
+    <script>
+      MathJax = {
+        tex: { inlineMath: [['$','$'], ['\\(','\\)']], displayMath: [['$$','$$'], ['\\[','\\]']] },
+        svg: { fontCache: 'global' }
+      };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
+</head>
+<body>
+  <div class="bg-layer" style="background-image:url('/blog/bg/002.jpg')"></div>
+  
+  <nav class="top-nav" id="topNav">
+    <a href="/blog/">Home</a>
+    <a href="/blog/archives/">Archives</a>
+    <a href="/blog/tags/">Tags</a>
+    <a href="https://github.com/MM0n5Ter">GitHub</a>
+  </nav>
+  
+  <button class="hamburger" onclick="toggleSidebar()" aria-label="Menu">☰</button>
+  <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+  <div class="glass-container">
+    <div class="layout-flex">
+      <aside class="sidebar">
+        
+        <img src="/blog/img/avatar.png" alt="avatar" class="sidebar-avatar">
+        <div class="sidebar-name">MMonster</div>
+        <div class="sidebar-bio">Security · Code · Life</div>
+
+        <div class="sidebar-section">
+          <div class="sidebar-section-title">Archives</div>
+          <ul class="sidebar-list">
+          <li><a href="/blog/archives/#2025-06">2025-06<span class="count">(1)</span></a></li>
+          <li><a href="/blog/archives/#2023-04">2023-04<span class="count">(3)</span></a></li>
+          <li><a href="/blog/archives/#2023-03">2023-03<span class="count">(2)</span></a></li>
+          <li><a href="/blog/archives/#2021-11">2021-11<span class="count">(1)</span></a></li>
+          <li><a href="/blog/archives/#2021-07">2021-07<span class="count">(2)</span></a></li>
+          <li><a href="/blog/archives/#2021-05">2021-05<span class="count">(1)</span></a></li>
+          </ul>
+        </div>
+
+        <div class="sidebar-section">
+          <div class="sidebar-section-title">Tags</div>
+          <ul class="sidebar-list">
+          <li><a href="/blog/tags/#%E6%97%A7%E5%9C%B0%E7%8B%B1">旧地狱<span class="count">(10)</span></a></li>
+          <li><a href="/blog/tags/#Crypto">Crypto<span class="count">(9)</span></a></li>
+          <li><a href="/blog/tags/#Soot">Soot<span class="count">(3)</span></a></li>
+          <li><a href="/blog/tags/#Android">Android<span class="count">(3)</span></a></li>
+          <li><a href="/blog/tags/#Lattice">Lattice<span class="count">(3)</span></a></li>
+          <li><a href="/blog/tags/#Tools">Tools<span class="count">(2)</span></a></li>
+          <li><a href="/blog/tags/#RE">RE<span class="count">(2)</span></a></li>
+          <li><a href="/blog/tags/#Java">Java<span class="count">(2)</span></a></li>
+          <li><a href="/blog/tags/#%E6%9D%82%E8%B0%88">杂谈<span class="count">(2)</span></a></li>
+          <li><a href="/blog/tags/#ecc">ecc<span class="count">(2)</span></a></li>
+          <li><a href="/blog/tags/#Algorithm">Algorithm<span class="count">(1)</span></a></li>
+          <li><a href="/blog/tags/#Program%20Analysis">Program Analysis<span class="count">(1)</span></a></li>
+          </ul>
+        </div>
+      </aside>
+      <main class="content">
+        
+        <article>
+          <header class="post-header">
+            <h1>伪随机数生成器</h1>
+            <div class="post-meta">
+              <time>2021-11-23</time>
+               · 旧地狱
+              <div style="margin-top:4px"><span class="tag">Crypto</span> <span class="tag">旧地狱</span></div>
+            </div>
+          </header>
+          <div class="post-body">
+            <p>源于某一道赛题，明年可以作为招新题出</p>
+<h2>随机数</h2>
+<p>随机数分为真随机数和伪随机数，我们程序使用的基本都是伪随机数，其中伪随机又分为强伪随机数和弱伪随机数。</p>
+<p>真随机数，通过物理实验得出，比如掷钱币、骰子、转轮、使用电子元件的噪音、核裂变等。需要满足随机性、不可预测性、不可重现性。
+ 伪随机数，通过一定算法和种子得出。软件实现的是伪随机数。
+ 强伪随机数，难以预测的随机数。需要满足随机性和不可预测性。
+ 弱伪随机数，易于预测的随机数。需要满足随机性。</p>
+<p>**只要这个随机数是由确定算法生成的，那就是伪随机。**只能通过不断算法优化，使你的随机数更接近随机。</p>
+<p>有限状态机不能产生真正的随机数的，所以，现代计算机中，无法通过一个纯算法来生成真正的随机数，无论是哪种语言，单纯的算法生成的数字都是伪随机数，都是由可确定的函数通过一个种子，产生的伪随机数。</p>
+<p>这也就意味着，如果知道了种子，就可以推断接下来的随机数序列的信息。这就有了可预测性。</p>
+<h3>常见种类及攻击方法：</h3>
+<ul>
+<li><h4>线性同余生成器，LCG</h4>
+<p><strong>特征</strong>：<span class="math-inline">$x_{n+1}\equiv(ax_n+c) \pmod n$</span></p>
+<p>经典（去年招新题）：</p>
+<pre><code class="hljs language-python"><span class="hljs-keyword">class</span> <span class="hljs-title class_">PRNG1</span>(<span class="hljs-title class_ inherited__">object</span>):
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self, bits</span>):
+        <span class="hljs-variable language_">self</span>.n = random.getrandbits(bits)
+        <span class="hljs-variable language_">self</span>.a = <span class="hljs-number">0</span>
+        <span class="hljs-variable language_">self</span>.b = <span class="hljs-number">0</span>
+        <span class="hljs-variable language_">self</span>.s = <span class="hljs-number">0</span>
+        <span class="hljs-keyword">while</span> <span class="hljs-keyword">not</span> (<span class="hljs-variable language_">self</span>.a &lt; <span class="hljs-variable language_">self</span>.n <span class="hljs-keyword">and</span> <span class="hljs-variable language_">self</span>.gcd(<span class="hljs-variable language_">self</span>.a, <span class="hljs-variable language_">self</span>.n) == <span class="hljs-number">1</span>):
+            <span class="hljs-variable language_">self</span>.a = random.getrandbits(bits)
+        <span class="hljs-keyword">while</span> <span class="hljs-keyword">not</span> (<span class="hljs-variable language_">self</span>.b &lt; <span class="hljs-variable language_">self</span>.n <span class="hljs-keyword">and</span> <span class="hljs-variable language_">self</span>.gcd(<span class="hljs-variable language_">self</span>.b, <span class="hljs-variable language_">self</span>.n) == <span class="hljs-number">1</span>):
+            <span class="hljs-variable language_">self</span>.b = random.getrandbits(bits)
+        <span class="hljs-keyword">while</span> <span class="hljs-keyword">not</span> (<span class="hljs-variable language_">self</span>.s &lt; <span class="hljs-variable language_">self</span>.n <span class="hljs-keyword">and</span> <span class="hljs-variable language_">self</span>.gcd(<span class="hljs-variable language_">self</span>.s, <span class="hljs-variable language_">self</span>.n) == <span class="hljs-number">1</span>):
+            <span class="hljs-variable language_">self</span>.s = random.getrandbits(bits)
+        <span class="hljs-comment">#对参数的随机化</span>
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">gcd</span>(<span class="hljs-params">self, a, b</span>):
+        <span class="hljs-keyword">while</span> b:
+            a, b = b, a % b
+        <span class="hljs-keyword">return</span> a
+
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">next</span>(<span class="hljs-params">self</span>):
+        <span class="hljs-variable language_">self</span>.s = (<span class="hljs-variable language_">self</span>.a * <span class="hljs-variable language_">self</span>.s + <span class="hljs-variable language_">self</span>.b) % <span class="hljs-variable language_">self</span>.n
+        <span class="hljs-comment">#核心：s2 = a*s1 + b</span>
+        <span class="hljs-keyword">return</span> <span class="hljs-variable language_">self</span>.s
+</code></pre><p>java的random类：</p>
+<pre><code class="hljs language-java"><span class="hljs-keyword">protected</span> <span class="hljs-type">int</span> <span class="hljs-title function_">next</span><span class="hljs-params">(<span class="hljs-type">int</span> bits)</span> {
+        <span class="hljs-type">long</span> oldseed, nextseed;
+        <span class="hljs-type">AtomicLong</span> <span class="hljs-variable">seed</span> <span class="hljs-operator">=</span> <span class="hljs-built_in">this</span>.seed;
+        <span class="hljs-keyword">do</span> {
+            oldseed = seed.get();
+            nextseed = (oldseed * multiplier + addend) &amp; mask;
+        } <span class="hljs-keyword">while</span> (!seed.compareAndSet(oldseed, nextseed));
+        <span class="hljs-keyword">return</span> (<span class="hljs-type">int</span>)(nextseed &gt;&gt;&gt; (<span class="hljs-number">48</span> - bits));
+    }
+</code></pre><p>安全性非常得差，只要知道连续几个就可以直接推出整个序列，而且序列是循环的</p>
+<p><strong>分析和攻击方法</strong>：</p>
+<p>先求n，只要稍作变形就可
+<div class="math-display">$
+  \left
+  \{\begin{aligned}
+  t_0 & =  s_1-s_0&\pmod n\\
+  t_1 & =  s_2-s_1=a*(s_1-s_0)=a*t_0&\pmod n\\
+  t_2 & =  s_3-s_2=a*(s_2-s_1)=a*t_1&\pmod n\\
+  t_3 & =  s_4-s_3=a*(s_3-s_2)=a*t_2&\pmod n\\
+  \end{aligned}}
+  \right
+  $</div></p>
+<p>然后进一步转化：</p>
+<p><div class="math-display">$
+  t_1^2-t_0*t_2\equiv0\pmod n
+  $</div></p>
+<p>然后造出3个n的因数，取gcd后得到的数及其因子都是可能的n（然而很多时候就是n），要拿hint判</p>
+<p>接下来我们干a</p>
+<p><div class="math-display">$
+  \left
+  \{\begin{aligned}
+  s_1\equiv s_0*a+b \pmod n \\
+  s_2\equiv s_1*a+b \pmod n
+  \end{aligned}}
+  \right
+  \Longrightarrow
+  a\equiv(s_0-s_1)/(s_1-s_2) \pmod n
+  $</div></p>
+<p>然后a也有了，搞b</p>
+<p><div class="math-display">$
+  s_1\equiv s_0*a+b \pmod n 
+  \Longrightarrow
+  s_1-s_0*a\equiv b \pmod n
+  $</div></p>
+<p>然后b就搞出来了，一个一个地推就好啦</p>
+</li>
+<li><h4>python&amp;c++：梅森旋转算法</h4>
+<p>通常称为mt19937算法，MT 是 Mersenne Twister 的缩写；而 19937 则取自算法中用到的梅森素数<span class="math-inline">$2^{19937}-1$</span>，梅森素数是算法生成伪随机数的循环长度（period)，而旋转则说的是算法内部对定长二进制串循环位移的过程。</p>
+<p><strong>特征</strong>：比特位移动后进行&amp;运算</p>
+<pre><code class="hljs language-C++"><span class="hljs-function"><span class="hljs-type">unsigned</span> <span class="hljs-type">int</span> <span class="hljs-title">Rand</span><span class="hljs-params">()</span>
+</span>{
+    <span class="hljs-keyword">if</span>(!isInit)
+        <span class="hljs-built_in">srand</span>((<span class="hljs-type">int</span>)<span class="hljs-built_in">time</span>(<span class="hljs-literal">NULL</span>));
+    <span class="hljs-keyword">if</span>(index == <span class="hljs-number">0</span>)
+        <span class="hljs-built_in">generate</span>();
+    <span class="hljs-type">unsigned</span> <span class="hljs-type">int</span> y = MT[index];
+    y = y ^ (y &gt;&gt; <span class="hljs-number">11</span>);                 <span class="hljs-comment">//y右移11个bit</span>
+    y = y ^ ((y &lt;&lt; <span class="hljs-number">7</span>) &amp; <span class="hljs-number">2636928640</span>);   <span class="hljs-comment">//y左移7个bit与2636928640相与，再与y进行异或</span>
+    y = y ^ ((y &lt;&lt; <span class="hljs-number">15</span>) &amp; <span class="hljs-number">4022730752</span>);  <span class="hljs-comment">//y左移15个bit与4022730752相与，再与y进行异或</span>
+    y = y ^ (y &gt;&gt; <span class="hljs-number">18</span>);                 <span class="hljs-comment">//y右移18个bit再与y进行异或</span>
+    index = (index + <span class="hljs-number">1</span>) % <span class="hljs-number">624</span>;
+    <span class="hljs-keyword">return</span> y;
+}
+</code></pre><p>或者对其进行魔改（今年面试题&amp;最近某比赛赛题）：</p>
+<pre><code class="hljs language-python"><span class="hljs-keyword">class</span> <span class="hljs-title class_">func</span>(<span class="hljs-title class_ inherited__">object</span>):
+  <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self, keys, num=<span class="hljs-number">0x1145141919810aaa</span></span>):
+      <span class="hljs-variable language_">self</span>.mask = keys		<span class="hljs-comment">#用于&amp;运算的mask</span>
+      <span class="hljs-variable language_">self</span>.seed = num		<span class="hljs-comment">#随机种子，及伪随机数的第一位</span>
+      <span class="hljs-variable language_">self</span>.bits = [random.randint(-<span class="hljs-number">32</span>, <span class="hljs-number">32</span>) <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">4</span>)]		<span class="hljs-comment">#位移的随机</span>
+
+  <span class="hljs-keyword">def</span> <span class="hljs-title function_">shift</span>(<span class="hljs-params">self, m, k, c</span>):
+      <span class="hljs-keyword">if</span> k &lt; <span class="hljs-number">0</span>:
+          <span class="hljs-keyword">return</span> m ^ m &gt;&gt; (-k) &amp; c
+      <span class="hljs-keyword">return</span> m ^ m &lt;&lt; k &amp; c		<span class="hljs-comment">#梅森旋转的核心步骤：位移+与</span>
+
+  <span class="hljs-keyword">def</span> <span class="hljs-title function_">convert</span>(<span class="hljs-params">self, m</span>):
+      <span class="hljs-keyword">for</span> t <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">4</span>):
+          m = <span class="hljs-variable language_">self</span>.shift(m, <span class="hljs-variable language_">self</span>.bits[t], <span class="hljs-variable language_">self</span>.mask[t])
+      <span class="hljs-keyword">return</span> m		<span class="hljs-comment">#做四次，其实做多少次都可以</span>
+
+  <span class="hljs-keyword">def</span> <span class="hljs-title function_">getrandom</span>(<span class="hljs-params">self</span>):
+      <span class="hljs-variable language_">self</span>.seed = <span class="hljs-variable language_">self</span>.convert(<span class="hljs-variable language_">self</span>.seed)
+      <span class="hljs-keyword">return</span> <span class="hljs-variable language_">self</span>.seed
+</code></pre><p><strong>分析和攻击方法</strong>：</p>
+<p>首先运算的优先级是位移&gt;&amp;&gt;异或</p>
+<p>那就先拆开了看，先看不带mask的（左移右移是一样的）：</p>
+<pre><code class="hljs language-python">y0 = y ^ (y &gt;&gt; <span class="hljs-number">11</span>)
+</code></pre><p>假设y是32位的，那这次运算后我们就失去了后21位的信息，但前11位留下了，把这11位与y0的12-23位做异或，就得到了y的12-23位，以此类推可以11位11位地推出信息，如此这个过程就逆完了</p>
+<p>再看带mask的：</p>
+<pre><code class="hljs language-python">y = y ^ ((y &gt;&gt; <span class="hljs-number">7</span>) &amp; <span class="hljs-number">2636928640</span>)
+</code></pre><p>其实和上面是一样的，就是加了一个mask吓人</p>
+<pre><code class="hljs language-python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">inverse_left_mask</span>(<span class="hljs-params">res, shift, mask, bits=<span class="hljs-number">32</span></span>):
+    tmp = res
+    <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(bits // shift):
+        tmp = res ^ tmp &lt;&lt; shift &amp; mask
+    <span class="hljs-keyword">return</span> tmp
+
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">inverse_right_mask</span>(<span class="hljs-params">res, shift, mask, bits=<span class="hljs-number">32</span></span>):
+    tmp = res
+    <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(bits // shift):
+        tmp = res ^ tmp &gt;&gt; shift &amp; mask
+    <span class="hljs-keyword">return</span> tmp
+</code></pre></li>
+<li><h4>xorshift RNG</h4>
+<p>原理是：<span class="math-inline">$\beta$</span>为一个n维的非零二进制向量(b1,b2,...,bn)，T为<span class="math-inline">$\beta$</span>的一个线性变换，则整个循环为<span class="math-inline">$\beta$</span>，<span class="math-inline">$\beta T$</span>，<span class="math-inline">$\beta T^2$</span>...</p>
+<p>且该伪随机数序列的循环节为<span class="math-inline">$2^n-1$</span>。</p>
+<p>特别的，当我们把T矩阵变成<span class="math-inline">$(I+L^n)$</span>，其中L是一个主对角线全1的对角矩阵，这个T在位运算上代表的操作就是y^(y&lt;&lt;n)，同理可知右侧</p>
+<p>所以最经典的xorshift的变换就是<span class="math-inline">$(I+L^a)(I+R^b)(I+L^c)$</span>其实和梅森回旋是一个东西</p>
+<p>这是一个更复杂的样例，用三维的矩阵去进行迭代，同时生成三个随机数：</p>
+<pre><code class="hljs language-c"><span class="hljs-type">uint32_t</span> <span class="hljs-title function_">xor128</span><span class="hljs-params">(<span class="hljs-type">void</span>)</span> {
+  <span class="hljs-type">static</span> <span class="hljs-type">uint32_t</span> x = <span class="hljs-number">123456789</span>;
+  <span class="hljs-type">static</span> <span class="hljs-type">uint32_t</span> y = <span class="hljs-number">362436069</span>;
+  <span class="hljs-type">static</span> <span class="hljs-type">uint32_t</span> z = <span class="hljs-number">521288629</span>;
+  <span class="hljs-type">static</span> <span class="hljs-type">uint32_t</span> w = <span class="hljs-number">88675123</span>;
+  <span class="hljs-type">uint32_t</span> t;
+
+  tem = x ^ (x &lt;&lt; <span class="hljs-number">11</span>);
+  x = y; y = z; z = w;
+  <span class="hljs-keyword">return</span> w = w ^ (w &gt;&gt; <span class="hljs-number">19</span>) ^ (tem ^ (tem &gt;&gt; <span class="hljs-number">8</span>));
+}
+</code></pre></li>
+</ul>
+<p>​		</p>
+<ul>
+<li><p><strong>LFSR</strong>，和上面那个好像关系蛮大的</p>
+<p>线性反馈移位寄存器：</p>
+<p>相关基础概念见ctfwiki</p>
+<p>出自2021西湖论剑</p>
+<pre><code class="hljs language-python"><span class="hljs-keyword">class</span> <span class="hljs-title class_">lfsr</span>():
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self, init, mask, length</span>):
+        <span class="hljs-variable language_">self</span>.init = init
+        <span class="hljs-variable language_">self</span>.mask = mask
+        <span class="hljs-variable language_">self</span>.lengthmask = <span class="hljs-number">2</span>**length - <span class="hljs-number">1</span>
+
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">next</span>(<span class="hljs-params">self</span>):
+        nextdata = (<span class="hljs-variable language_">self</span>.init &lt;&lt; <span class="hljs-number">1</span>) &amp; <span class="hljs-variable language_">self</span>.lengthmask
+        i = <span class="hljs-variable language_">self</span>.init &amp; <span class="hljs-variable language_">self</span>.mask &amp; <span class="hljs-variable language_">self</span>.lengthmask
+        output = <span class="hljs-number">0</span>
+        <span class="hljs-keyword">while</span> i != <span class="hljs-number">0</span>:
+            output ^= (i &amp; <span class="hljs-number">1</span>)
+            i = i &gt;&gt; <span class="hljs-number">1</span>
+        nextdata ^= output
+        <span class="hljs-variable language_">self</span>.init = nextdata
+        <span class="hljs-keyword">return</span> output
+</code></pre><p>这是最常见的lfsr，其脆弱性来自于异或的可逆</p>
+</li>
+</ul>
+
+          </div>
+        </article>
+      </main>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    © 2026 MMonster
+  </footer>
+
+  <script>
+    function toggleSidebar() {
+      document.querySelector('.sidebar').classList.toggle('sidebar-open');
+      document.querySelector('.sidebar-overlay').classList.toggle('active');
+    }
+    // Top nav: scrolled style + hide on scroll down, show on scroll up
+    (function() {
+      var nav = document.getElementById('topNav');
+      if (!nav) return;
+      var lastY = 0;
+      window.addEventListener('scroll', function() {
+        var y = window.scrollY;
+        nav.classList.toggle('scrolled', y > 100);
+        if (y > window.innerHeight * 0.8) {
+          nav.classList.toggle('nav-hidden', y > lastY);
+        } else {
+          nav.classList.remove('nav-hidden');
+        }
+        lastY = y;
+      });
+    })();
+  </script>
+</body>
+</html>

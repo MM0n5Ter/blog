@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>静态程序分析(1)-控制流分析 - MMonster的小窝</title>
+  <link rel="stylesheet" href="/blog/css/style.css">
+  <link rel="stylesheet" href="/blog/css/hljs.css">
+    <script>
+      MathJax = {
+        tex: { inlineMath: [['$','$'], ['\\(','\\)']], displayMath: [['$$','$$'], ['\\[','\\]']] },
+        svg: { fontCache: 'global' }
+      };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
+</head>
+<body>
+  <div class="bg-layer" style="background-image:url('/blog/bg/002.jpg')"></div>
+  
+  <nav class="top-nav" id="topNav">
+    <a href="/blog/">Home</a>
+    <a href="/blog/archives/">Archives</a>
+    <a href="/blog/tags/">Tags</a>
+    <a href="https://github.com/MM0n5Ter">GitHub</a>
+  </nav>
+  
+  <button class="hamburger" onclick="toggleSidebar()" aria-label="Menu">☰</button>
+  <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+  <div class="glass-container">
+    <div class="layout-flex">
+      <aside class="sidebar">
+        
+        <img src="/blog/img/avatar.png" alt="avatar" class="sidebar-avatar">
+        <div class="sidebar-name">MMonster</div>
+        <div class="sidebar-bio">Security · Code · Life</div>
+
+        <div class="sidebar-section">
+          <div class="sidebar-section-title">Archives</div>
+          <ul class="sidebar-list">
+          <li><a href="/blog/archives/#2025-06">2025-06<span class="count">(1)</span></a></li>
+          <li><a href="/blog/archives/#2023-04">2023-04<span class="count">(3)</span></a></li>
+          <li><a href="/blog/archives/#2023-03">2023-03<span class="count">(2)</span></a></li>
+          <li><a href="/blog/archives/#2021-11">2021-11<span class="count">(1)</span></a></li>
+          <li><a href="/blog/archives/#2021-07">2021-07<span class="count">(2)</span></a></li>
+          <li><a href="/blog/archives/#2021-05">2021-05<span class="count">(1)</span></a></li>
+          </ul>
+        </div>
+
+        <div class="sidebar-section">
+          <div class="sidebar-section-title">Tags</div>
+          <ul class="sidebar-list">
+          <li><a href="/blog/tags/#%E6%97%A7%E5%9C%B0%E7%8B%B1">旧地狱<span class="count">(10)</span></a></li>
+          <li><a href="/blog/tags/#Crypto">Crypto<span class="count">(9)</span></a></li>
+          <li><a href="/blog/tags/#Soot">Soot<span class="count">(3)</span></a></li>
+          <li><a href="/blog/tags/#Android">Android<span class="count">(3)</span></a></li>
+          <li><a href="/blog/tags/#Lattice">Lattice<span class="count">(3)</span></a></li>
+          <li><a href="/blog/tags/#Tools">Tools<span class="count">(2)</span></a></li>
+          <li><a href="/blog/tags/#RE">RE<span class="count">(2)</span></a></li>
+          <li><a href="/blog/tags/#Java">Java<span class="count">(2)</span></a></li>
+          <li><a href="/blog/tags/#%E6%9D%82%E8%B0%88">杂谈<span class="count">(2)</span></a></li>
+          <li><a href="/blog/tags/#ecc">ecc<span class="count">(2)</span></a></li>
+          <li><a href="/blog/tags/#Algorithm">Algorithm<span class="count">(1)</span></a></li>
+          <li><a href="/blog/tags/#Program%20Analysis">Program Analysis<span class="count">(1)</span></a></li>
+          </ul>
+        </div>
+      </aside>
+      <main class="content">
+        
+        <article>
+          <header class="post-header">
+            <h1>静态程序分析(1)-控制流分析</h1>
+            <div class="post-meta">
+              <time>2023-04-13</time>
+               · Static-Program-Analysis
+              <div style="margin-top:4px"><span class="tag">Soot</span> <span class="tag">Static—Program-Analysis</span> <span class="tag">Study</span></div>
+            </div>
+          </header>
+          <div class="post-body">
+            <h2>前置知识：编译和中间表示</h2>
+<p>在这里直接简略书写了：</p>
+<ul>
+<li><p>编译器：将源码编译成机器码</p>
+</li>
+<li><p>编译器的工作流程：词法分析，语法分析，语义分析，中间代码生成&amp;优化，目标代码生成</p>
+</li>
+<li><p>中间表示包括哟AST（抽象语法树）IR（平台无关中间指令）</p>
+</li>
+<li><p>AST：更高层，和语法切合非常近，依赖语言</p>
+</li>
+<li><p>IR：更底层，和机器码非常近，不依赖语言</p>
+</li>
+<li><p>SSA（静态单赋值）：编译原理当时专门认真学了学，结果不在考试范围内，哭</p>
+</li>
+<li><p>Basic Block（基本块）：只有一个入口，一个出口</p>
+</li>
+<li><p>CFG（控制流图）</p>
+</li>
+</ul>
+<h2>概览</h2>
+<ul>
+<li>节点➡BB，边➡控制流</li>
+<li>may analysis &amp; must analysis</li>
+</ul>
+<h2>初步</h2>
+<p><strong>输入输出状态：</strong></p>
+<ul>
+<li>每一条IR的执行，都会使状态从<strong>输入状态</strong>变成新的<strong>输出状态</strong></li>
+<li><strong>transfer function</strong>，前向分析：OUT[s] = <span class="math-inline">$f_s$</span>(IN[s])</li>
+</ul>
+<p><strong>控制流约束：</strong></p>
+<ul>
+<li>基础块内</li>
+<li>基础块间</li>
+</ul>
+<h2>Reaching Definition Analysis</h2>
+<blockquote>
+<p>不涉及：函数调用，变量别名</p>
+<p>后期课程会有对应的：程序间分析，指针分析</p>
+</blockquote>
+<h3>基本概念</h3>
+<ul>
+<li><p>假定 x 有定值 d (<strong>definition</strong>)，如果存在一个路径，从紧随 d 的点到达某点 p，并且此路径上面没有 x 的其他定值点，则称 x 的定值 d 到达 (<strong>reaching</strong>) p。（赋值的作用域？）</p>
+</li>
+<li><p>用于检测未定义的变量</p>
+<blockquote>
+<p>栗子：</p>
+<p>我们在程序入口为各变量引入一个 dummy 定值。当程序出口的某变量定值依然为 dummy，则我们可以认为该变量未被定义。</p>
+</blockquote>
+</li>
+<li><p>转移方程：<span class="math-inline">$OUT[B] = gen_B\cup(IN[B]-kill_B)$</span></p>
+<img loading="lazy" src="/blog/img/SPA/image-20220628152914822.png" style="zoom:33%;" />
+</li>
+<li><p>控制流：<span class="math-inline">$IN[B] = \cup_{P\ a\ predecessor\ of\ B}OUT[P]$</span></p>
+</li>
+</ul>
+<h3>算法</h3>
+<pre><code><span class="hljs-keyword">OUT</span>[<span class="hljs-built_in">entry</span>] = Φ;
+for(each basic <span class="hljs-keyword">block</span> B\<span class="hljs-built_in">entry</span>)
+    <span class="hljs-keyword">OUT</span>[B] = Φ;					## 此处may一般都为Φ，must一般都为top
+<span class="hljs-keyword">while</span>(changes to <span class="hljs-built_in">any</span> <span class="hljs-keyword">OUT</span> occur)
+    for(each basic <span class="hljs-keyword">block</span> B\<span class="hljs-built_in">entry</span>){
+        控制流方程；
+        转移方程；
+    }
+</code></pre><h3>栗子</h3>
+<p>图图如下：</p>
+<img loading="lazy" src="/blog/img/SPA/image-20220628155533472.png" style="zoom:33%;" />
+
+<p>运行过程如下：</p>
+<img loading="lazy" src="/blog/img/SPA/image-20220628160839274.png" style="zoom:33%;" />
+
+<h3>安全性分析</h3>
+<p><strong>此算法为单调算法，且有上界，则必然会达到不动点</strong></p>
+<h2>Live Variables Analysis</h2>
+<h3>基础概念</h3>
+<ul>
+<li><p>变量 x 在程序点 p 上的值是否会在某条从 p 出发的路径中使用</p>
+</li>
+<li><p>变量 x 在 p 上活跃，当且仅存在一条从 p 开始的路径，该路径的末端使用了 x，且路径上没有对 x进行覆盖。</p>
+</li>
+<li><p>隐藏了这样一个含义：在被使用前，v 没有被重新定义过，即没有被 kill 过。</p>
+</li>
+</ul>
+<blockquote>
+<p>用例：寄存器分配，替换不活跃的值的寄存器</p>
+</blockquote>
+<ul>
+<li><p>控制流：<span class="math-inline">$OUT[B] = \cup_{S\ a\ successor\ of\ B}IN[B]$</span></p>
+</li>
+<li><p>转移方程：<span class="math-inline">$IN[B]=use_B\cup[OUT[B]-def_B]$</span></p>
+<p>此处的use要求再define之前use</p>
+<p><img loading="lazy" src="/blog/img/SPA/image-20220701125550643.png" alt=""></p>
+</li>
+</ul>
+<h3>算法</h3>
+<pre><code>IN[<span class="hljs-keyword">exit</span>] = Φ;
+<span class="hljs-keyword">for</span>(each basic block B\<span class="hljs-keyword">exit</span>)
+    IN[B] = Φ;
+<span class="hljs-keyword">while</span>(changes to any IN occur)
+    <span class="hljs-keyword">for</span>(each basic block B\<span class="hljs-keyword">exit</span>){
+        控制流方程;
+        转移方程;
+    }
+</code></pre><h3>栗子</h3>
+<img loading="lazy" src="/blog/img/SPA/image-20220701130237308.png" style="zoom:33%;" />
+
+<img loading="lazy" src="/blog/img/SPA/image-20220701131402863.png" style="zoom:33%;" />
+
+<h2>Available Expressions Analysis</h2>
+<h3>基础概念</h3>
+<ul>
+<li><p>x + y 在 p 点可用的条件：从流图入口结点到达 p 的每条路径都对 x + y 求了值，且在最后一次求值之后<strong>再没有对 x 或 y 赋值</strong></p>
+</li>
+<li><p>可用表达式可以用于全局公共子表达式的计算。也就是说，如果一个表达式上次计算的值到这次仍然可用，我们就能直接利用其中值，而不用进行再次的计算。</p>
+</li>
+<li><p>转移方程：<span class="math-inline">$OUT[B] = gen_B\cup{IN[B]-kill_B}$</span></p>
+</li>
+<li><p>控制流：<span class="math-inline">$IN[B]=\cap_{P\ a\ predecessor\ of\ B}OUT[P]$</span></p>
+<blockquote>
+<p>用例：用于减少冗余计算操作，每个次要用就等于其上一节点中的值</p>
+</blockquote>
+</li>
+</ul>
+<h3>算法</h3>
+<pre><code><span class="hljs-keyword">OUT</span>[<span class="hljs-built_in">entry</span>] = Φ;
+for(each basic <span class="hljs-keyword">block</span> B\<span class="hljs-built_in">entry</span>)
+    <span class="hljs-keyword">OUT</span>[B] = U;
+<span class="hljs-keyword">while</span>(changes to <span class="hljs-built_in">any</span> <span class="hljs-keyword">OUT</span> occur)
+    for(each basic <span class="hljs-keyword">block</span> B\<span class="hljs-built_in">entry</span>){
+        控制流;
+        转移方程;
+    }
+</code></pre><h3>栗子</h3>
+<img loading="lazy" src="/blog/img/SPA/image-20220702145741931.png" style="zoom:33%;" />
+
+<img loading="lazy" src="/blog/img/SPA/image-20220702150656186.png" style="zoom:33%;" />
+
+<h2>比较</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Reaching Definitions</th>
+<th>Live Variables</th>
+<th>Available Expressions</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Domin</td>
+<td>Set of definitions</td>
+<td>Set of variables</td>
+<td>Set of expressions</td>
+</tr>
+<tr>
+<td>Direction</td>
+<td>Forward</td>
+<td>Backward</td>
+<td>Forward</td>
+</tr>
+<tr>
+<td>May/Must</td>
+<td>May</td>
+<td>May</td>
+<td>Must</td>
+</tr>
+<tr>
+<td>Boundary</td>
+<td>OUT[entry] = Φ</td>
+<td>IN[exit] = Φ</td>
+<td>OUT[entry] = Φ</td>
+</tr>
+<tr>
+<td>Initialization</td>
+<td>OUT[B] = Φ</td>
+<td>IN[B] = Φ</td>
+<td>OUT[B] = ∪</td>
+</tr>
+<tr>
+<td>Transfer</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Meet</td>
+<td>∪</td>
+<td>∪</td>
+<td>∩</td>
+</tr>
+</tbody></table>
+<h2>课后作业-A1</h2>
+<p>任务目标：<a href="https://tai-e.pascal-lab.net/pa1.html">作业 1：活跃变量分析和迭代求解器 | Tai-e (pascal-lab.net)</a></p>
+<p>完成：个人github</p>
+
+          </div>
+        </article>
+      </main>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    © 2026 MMonster
+  </footer>
+
+  <script>
+    function toggleSidebar() {
+      document.querySelector('.sidebar').classList.toggle('sidebar-open');
+      document.querySelector('.sidebar-overlay').classList.toggle('active');
+    }
+    // Top nav: scrolled style + hide on scroll down, show on scroll up
+    (function() {
+      var nav = document.getElementById('topNav');
+      if (!nav) return;
+      var lastY = 0;
+      window.addEventListener('scroll', function() {
+        var y = window.scrollY;
+        nav.classList.toggle('scrolled', y > 100);
+        if (y > window.innerHeight * 0.8) {
+          nav.classList.toggle('nav-hidden', y > lastY);
+        } else {
+          nav.classList.remove('nav-hidden');
+        }
+        lastY = y;
+      });
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>2021V&N Crypto方向 - MMonster的小窝</title>
+  <link rel="stylesheet" href="/blog/css/style.css">
+  <link rel="stylesheet" href="/blog/css/hljs.css">
+    <script>
+      MathJax = {
+        tex: { inlineMath: [['$','$'], ['\\(','\\)']], displayMath: [['$$','$$'], ['\\[','\\]']] },
+        svg: { fontCache: 'global' }
+      };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
+</head>
+<body>
+  <div class="bg-layer" style="background-image:url('/blog/bg/002.jpg')"></div>
+  
+  <nav class="top-nav" id="topNav">
+    <a href="/blog/">Home</a>
+    <a href="/blog/archives/">Archives</a>
+    <a href="/blog/tags/">Tags</a>
+    <a href="https://github.com/MM0n5Ter">GitHub</a>
+  </nav>
+  
+  <button class="hamburger" onclick="toggleSidebar()" aria-label="Menu">☰</button>
+  <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+  <div class="glass-container">
+    <div class="layout-flex">
+      <aside class="sidebar">
+        
+        <img src="/blog/img/avatar.png" alt="avatar" class="sidebar-avatar">
+        <div class="sidebar-name">MMonster</div>
+        <div class="sidebar-bio">Security · Code · Life</div>
+
+        <div class="sidebar-section">
+          <div class="sidebar-section-title">Archives</div>
+          <ul class="sidebar-list">
+          <li><a href="/blog/archives/#2025-06">2025-06<span class="count">(1)</span></a></li>
+          <li><a href="/blog/archives/#2023-04">2023-04<span class="count">(3)</span></a></li>
+          <li><a href="/blog/archives/#2023-03">2023-03<span class="count">(2)</span></a></li>
+          <li><a href="/blog/archives/#2021-11">2021-11<span class="count">(1)</span></a></li>
+          <li><a href="/blog/archives/#2021-07">2021-07<span class="count">(2)</span></a></li>
+          <li><a href="/blog/archives/#2021-05">2021-05<span class="count">(1)</span></a></li>
+          </ul>
+        </div>
+
+        <div class="sidebar-section">
+          <div class="sidebar-section-title">Tags</div>
+          <ul class="sidebar-list">
+          <li><a href="/blog/tags/#%E6%97%A7%E5%9C%B0%E7%8B%B1">旧地狱<span class="count">(10)</span></a></li>
+          <li><a href="/blog/tags/#Crypto">Crypto<span class="count">(9)</span></a></li>
+          <li><a href="/blog/tags/#Soot">Soot<span class="count">(3)</span></a></li>
+          <li><a href="/blog/tags/#Android">Android<span class="count">(3)</span></a></li>
+          <li><a href="/blog/tags/#Lattice">Lattice<span class="count">(3)</span></a></li>
+          <li><a href="/blog/tags/#Tools">Tools<span class="count">(2)</span></a></li>
+          <li><a href="/blog/tags/#RE">RE<span class="count">(2)</span></a></li>
+          <li><a href="/blog/tags/#Java">Java<span class="count">(2)</span></a></li>
+          <li><a href="/blog/tags/#%E6%9D%82%E8%B0%88">杂谈<span class="count">(2)</span></a></li>
+          <li><a href="/blog/tags/#ecc">ecc<span class="count">(2)</span></a></li>
+          <li><a href="/blog/tags/#Algorithm">Algorithm<span class="count">(1)</span></a></li>
+          <li><a href="/blog/tags/#Program%20Analysis">Program Analysis<span class="count">(1)</span></a></li>
+          </ul>
+        </div>
+      </aside>
+      <main class="content">
+        
+        <article>
+          <header class="post-header">
+            <h1>2021V&N Crypto方向</h1>
+            <div class="post-meta">
+              <time>2021-03-23</time>
+               · 旧地狱
+              <div style="margin-top:4px"><span class="tag">是做不出来的题</span> <span class="tag">V&N2021</span> <span class="tag">Crypto</span> <span class="tag">旧地狱</span></div>
+            </div>
+          </header>
+          <div class="post-body">
+            <p>2021V&amp;N 公开赛，因为个人原因（咕咕咕🕊所以只做了一个签到</p>
+<p>在补上了在补上了额👾👾👾</p>
+<h1>WhiteGive</h1>
+<p><em>呜呜呜，白给题不会做</em></p>
+<h3>题目描述如下：</h3>
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> Crypto.Util.number <span class="hljs-keyword">import</span> *
+<span class="hljs-keyword">from</span> secret <span class="hljs-keyword">import</span> url
+<span class="hljs-keyword">from</span> gmpy2 <span class="hljs-keyword">import</span> *
+
+m = bytes_to_long(url)
+p = getPrime(<span class="hljs-number">512</span>)
+q = getPrime(<span class="hljs-number">512</span>)
+n = p * q
+d = getPrime(<span class="hljs-number">256</span>)
+e = inverse(d,(p-<span class="hljs-number">1</span>)*(q-<span class="hljs-number">1</span>))
+c = <span class="hljs-built_in">pow</span>(m,e,n)
+
+<span class="hljs-built_in">print</span>(n)
+<span class="hljs-built_in">print</span>(c)
+
+m = e
+p = getPrime(<span class="hljs-number">512</span>)
+q = getPrime(<span class="hljs-number">512</span>)
+n = p * p * q
+e = <span class="hljs-number">0x10001</span>
+d = inverse(e,lcm(p,lcm(p-<span class="hljs-number">1</span>,q-<span class="hljs-number">1</span>)))
+c = <span class="hljs-built_in">pow</span>(m,e,n)
+hint = <span class="hljs-built_in">pow</span>(d,e,n)
+
+<span class="hljs-built_in">print</span>(n)
+<span class="hljs-built_in">print</span>(c)
+<span class="hljs-built_in">print</span>(hint)
+
+<span class="hljs-string">&#x27;&#x27;&#x27;
+97814568264814384858194701955408461509880555772006698372422205341758322175891474378211599333051180365254844248340812534463000531890490435018379585036704801177155418066770861143206836558793774360498040810255823235715535487716966004194143204900564413879660115112965484824906920141847149888933004740523449213441
+86143311788363675684674113699193046781796638913243016152555572150858159500527674063754694514501999791875561142925154991000532628799185608465062814546108160434468098898040769021072007374156546314975240583347468026001633652940408779155579339470960571067652924814623371177901052302005289155305089588204204313261
+1246903000089073759886267722667196003041462505274526737638837808213476294697746018085346623497511017543801377442390781101585650581984057653018703031659844145960721073451379508212905335383758157379301019575213158532070229897587088955814288202279949391608732448294591675986989254272257059551622461096394217684402667140362275595245430242117193793913872208576714597860532581116390903216389172132085635891741189355461016795362341416848534340615825023292174042406128959
+952508462840095293368043281511747192551431448088755251878915582522463097721381421883702408853564036431155676272901680250701398946525803160765527940151587567521509500006089852079864042238196362897144754722623523621230744820970423076092319608853809407595863195726851921082224085255808985329769890887863865121647796115540376158135632760785321953364738008064130705467326745546629505023549047992509562623348749056757848144371814157305011884825502144329268299851210747
+788785744509676701442642497798353940704045062680685297430840370664093043099033424646382070232242765761123110381200239132310785932203252095093993313010883982078216697297202940152563278231011836966627537170460186597134847633828107444548759805274516431300662852153808962421740187067058018192457264083227110866080267684557127718769967184710395811547902947248700889674967381917907905535103547918375731341071557144999864774198881339085314424766509424492349867615604684
+
+&#x27;&#x27;&#x27;</span>
+</code></pre><p>先把最外层的套娃给解了:</p>
+<p><span class="math-inline">$d\*e=k_1\*p\*lcm(p-1,q-1)+1 \tag{1.1} $</span></p>
+<p><span class="math-inline">$d^e=k_2\*p^2\*q+hint \tag{1.2} $</span></p>
+<p>给（1，1）式做一个e次方，（1，2）式乘一个e^e，就可以搞成一个东西：</p>
+<p>$
+k_3*p*lcm(p-1,q-1)+1=k_4*p^2*q+hint*e^e \tag{1.3}
+$</p>
+<p>再化：</p>
+<p>$
+p\mid hint*e^e-1 \tag{1.4}
+$</p>
+<p>将这个式子和n求公约数可以直接导出p，接下来正常步骤做完第一层套娃，得到e
+然后可以发现这个e奇大无比，普通wiener搞不定，使用Boneh_Durfee attack（或者魔改wiener），扔进脚本直接解出url，下载得到最后一层套娃：</p>
+<pre><code class="hljs language-python"><span class="hljs-comment"># Wow, you got here!</span>
+<span class="hljs-comment"># This is the last task, trust me!</span>
+<span class="hljs-keyword">from</span> Crypto.Util.number <span class="hljs-keyword">import</span> *
+<span class="hljs-keyword">from</span> secret <span class="hljs-keyword">import</span> flag,padding
+<span class="hljs-keyword">from</span> gmpy2 <span class="hljs-keyword">import</span> *
+
+m = bytes_to_long(flag)
+e = <span class="hljs-number">7</span> 
+
+p = getPrime(<span class="hljs-number">512</span>)
+q = getPrime(<span class="hljs-number">512</span>)
+n = p * q
+
+c1 = <span class="hljs-built_in">pow</span>(m,e,n)
+c2 = <span class="hljs-built_in">pow</span>(m+padding,e,n)
+
+<span class="hljs-built_in">print</span>(n)
+<span class="hljs-built_in">print</span>(c1)
+<span class="hljs-built_in">print</span>(c2)
+
+<span class="hljs-string">&#x27;&#x27;&#x27;
+143224951702807798608353389056046982493788310072914995404719898237226283884553121669729599925829562704800197375580487019006702401282671268969358774635337351738915083955659230582177495821699251999928502338923489031347921151957398310960671307216790020399224115377846788378990638367296298663795893865325304226511
+74797173657575640598140788410852016843612519588375968190579734420951374103129570637822547217967978911328419808529204143522454142303138959013220811558490951614314306849367068478190797885056922705403028856734095288522290055309880572321557493798362056216783777593386133347693892941928131945986087712737862263761
+9209695919437085323423940852135308337887271742988391422139555924185234849146079306139570263602339983687993333013333937719071267190971983543492940032646907167417161479697805991443259327402389097539126399994414628326218438416138199892253597375493026563369334352434282120293396846427418323600336867792587721214
+
+&#x27;&#x27;&#x27;</span>
+</code></pre><p>非常显然的coppersmith short_padding_attack加上related_message_attack，扔进脚本直接解出flag</p>
+<h3>EXP</h3>
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> gmpy2 <span class="hljs-keyword">import</span> *
+<span class="hljs-keyword">from</span> Crypto.Util.number <span class="hljs-keyword">import</span> long_to_bytes
+<span class="hljs-comment"># 第一层</span>
+e = <span class="hljs-number">65537</span>
+h = <span class="hljs-number">788785744509676701442642497798353940704045062680685297430840370664093043099033424646382070232242765761123110381200239132310785932203252095093993313010883982078216697297202940152563278231011836966627537170460186597134847633828107444548759805274516431300662852153808962421740187067058018192457264083227110866080267684557127718769967184710395811547902947248700889674967381917907905535103547918375731341071557144999864774198881339085314424766509424492349867615604684</span>
+n = <span class="hljs-number">1246903000089073759886267722667196003041462505274526737638837808213476294697746018085346623497511017543801377442390781101585650581984057653018703031659844145960721073451379508212905335383758157379301019575213158532070229897587088955814288202279949391608732448294591675986989254272257059551622461096394217684402667140362275595245430242117193793913872208576714597860532581116390903216389172132085635891741189355461016795362341416848534340615825023292174042406128959</span>
+c = <span class="hljs-number">952508462840095293368043281511747192551431448088755251878915582522463097721381421883702408853564036431155676272901680250701398946525803160765527940151587567521509500006089852079864042238196362897144754722623523621230744820970423076092319608853809407595863195726851921082224085255808985329769890887863865121647796115540376158135632760785321953364738008064130705467326745546629505023549047992509562623348749056757848144371814157305011884825502144329268299851210747</span>
+ee = <span class="hljs-built_in">pow</span>(e, e)
+p = gcd(ee * h - <span class="hljs-number">1</span>, n)
+q = n // p ** <span class="hljs-number">2</span>
+phi = (p - <span class="hljs-number">1</span>) * p * (q - <span class="hljs-number">1</span>)
+d = invert(e,phi)
+e = <span class="hljs-built_in">pow</span>(c, d, n)
+<span class="hljs-built_in">print</span>(e)
+
+<span class="hljs-comment"># 第二层</span>
+<span class="hljs-comment"># Boneh_Durfee attack出的结果</span>
+<span class="hljs-comment"># 脚本在https://github.com/mimoo/RSA-and-LLL-attacks/blob/master/boneh_durfee.sage</span>
+d = <span class="hljs-number">103079922798932082066165266087442072203677117380612800709240732626110126828541</span>
+n = <span class="hljs-number">97814568264814384858194701955408461509880555772006698372422205341758322175891474378211599333051180365254844248340812534463000531890490435018379585036704801177155418066770861143206836558793774360498040810255823235715535487716966004194143204900564413879660115112965484824906920141847149888933004740523449213441</span>
+<span class="hljs-keyword">assert</span> <span class="hljs-built_in">pow</span>(<span class="hljs-built_in">pow</span>(<span class="hljs-number">3</span>,e,n),d,n) == <span class="hljs-number">3</span>
+
+c = <span class="hljs-number">86143311788363675684674113699193046781796638913243016152555572150858159500527674063754694514501999791875561142925154991000532628799185608465062814546108160434468098898040769021072007374156546314975240583347468026001633652940408779155579339470960571067652924814623371177901052302005289155305089588204204313261</span>
+<span class="hljs-built_in">print</span>(long_to_bytes(<span class="hljs-built_in">pow</span>(c,d,n)))
+
+<span class="hljs-comment"># 第三层</span>
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">short_pad_attack</span>(<span class="hljs-params">c1, c2, e, n</span>):
+        PRxy.&lt;x,y&gt; = PolynomialRing(Zmod(n))
+        PRx.&lt;xn&gt; = PolynomialRing(Zmod(n))
+        PRZZ.&lt;xz,yz&gt; = PolynomialRing(Zmod(n))
+        g1 = x^e - c1
+        g2 = (x+y)^e - c2
+        q1 = g1.change_ring(PRZZ)
+        q2 = g2.change_ring(PRZZ)
+        h = q2.resultant(q1)
+        h = h.univariate_polynomial()
+        h = h.change_ring(PRx).subs(y=xn)
+        h = h.monic()
+        kbits = n.nbits()//(<span class="hljs-number">2</span>*e*e)
+        diff = h.small_roots(X=<span class="hljs-number">2</span>^kbits, beta=<span class="hljs-number">0.4</span>)[<span class="hljs-number">0</span>]
+        <span class="hljs-keyword">return</span> diff
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">related_message_attack</span>(<span class="hljs-params">c1, c2, diff, e, n</span>):
+    PRx.&lt;x&gt; = PolynomialRing(Zmod(n))
+    g1 = x^e - c1
+    g2 = (x+diff)^e - c2
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">gcd</span>(<span class="hljs-params">g1, g2</span>):
+        <span class="hljs-keyword">while</span> g2:
+            g1, g2 = g2, g1 % g2
+        <span class="hljs-keyword">return</span> g1.monic()
+    <span class="hljs-keyword">return</span> -gcd(g1, g2)[<span class="hljs-number">0</span>]
+
+n = <span class="hljs-number">143224951702807798608353389056046982493788310072914995404719898237226283884553121669729599925829562704800197375580487019006702401282671268969358774635337351738915083955659230582177495821699251999928502338923489031347921151957398310960671307216790020399224115377846788378990638367296298663795893865325304226511</span>
+e = <span class="hljs-number">7</span>
+c1 = <span class="hljs-number">74797173657575640598140788410852016843612519588375968190579734420951374103129570637822547217967978911328419808529204143522454142303138959013220811558490951614314306849367068478190797885056922705403028856734095288522290055309880572321557493798362056216783777593386133347693892941928131945986087712737862263761</span>
+c2 = <span class="hljs-number">9209695919437085323423940852135308337887271742988391422139555924185234849146079306139570263602339983687993333013333937719071267190971983543492940032646907167417161479697805991443259327402389097539126399994414628326218438416138199892253597375493026563369334352434282120293396846427418323600336867792587721214</span>
+diff = short_pad_attack(c1, c2, e, n)
+m1 = related_message_attack(c1, c2, diff, e, n)
+long_to_bytes(m1)
+    
+<span class="hljs-comment"># VNCTF{H4ppyNeWy34r!2021_V&amp;N_figHt1ng!}</span>
+</code></pre>
+          </div>
+        </article>
+      </main>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    © 2026 MMonster
+  </footer>
+
+  <script>
+    function toggleSidebar() {
+      document.querySelector('.sidebar').classList.toggle('sidebar-open');
+      document.querySelector('.sidebar-overlay').classList.toggle('active');
+    }
+    // Top nav: scrolled style + hide on scroll down, show on scroll up
+    (function() {
+      var nav = document.getElementById('topNav');
+      if (!nav) return;
+      var lastY = 0;
+      window.addEventListener('scroll', function() {
+        var y = window.scrollY;
+        nav.classList.toggle('scrolled', y > 100);
+        if (y > window.innerHeight * 0.8) {
+          nav.classList.toggle('nav-hidden', y > lastY);
+        } else {
+          nav.classList.remove('nav-hidden');
+        }
+        lastY = y;
+      });
+    })();
+  </script>
+</body>
+</html>

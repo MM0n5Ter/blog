@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Soot从入门到入土(2)-IR(Jimple) - MMonster的小窝</title>
+  <link rel="stylesheet" href="/blog/css/style.css">
+  <link rel="stylesheet" href="/blog/css/hljs.css">
+</head>
+<body>
+  <div class="bg-layer" style="background-image:url('/blog/bg/002.jpg')"></div>
+  
+  <nav class="top-nav" id="topNav">
+    <a href="/blog/">Home</a>
+    <a href="/blog/archives/">Archives</a>
+    <a href="/blog/tags/">Tags</a>
+    <a href="https://github.com/MM0n5Ter">GitHub</a>
+  </nav>
+  
+  <button class="hamburger" onclick="toggleSidebar()" aria-label="Menu">☰</button>
+  <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+  <div class="glass-container">
+    <div class="layout-flex">
+      <aside class="sidebar">
+        
+        <img src="/blog/img/avatar.png" alt="avatar" class="sidebar-avatar">
+        <div class="sidebar-name">MMonster</div>
+        <div class="sidebar-bio">Security · Code · Life</div>
+
+        <div class="sidebar-section">
+          <div class="sidebar-section-title">Archives</div>
+          <ul class="sidebar-list">
+          <li><a href="/blog/archives/#2025-06">2025-06<span class="count">(1)</span></a></li>
+          <li><a href="/blog/archives/#2023-04">2023-04<span class="count">(3)</span></a></li>
+          <li><a href="/blog/archives/#2023-03">2023-03<span class="count">(2)</span></a></li>
+          <li><a href="/blog/archives/#2021-11">2021-11<span class="count">(1)</span></a></li>
+          <li><a href="/blog/archives/#2021-07">2021-07<span class="count">(2)</span></a></li>
+          <li><a href="/blog/archives/#2021-05">2021-05<span class="count">(1)</span></a></li>
+          </ul>
+        </div>
+
+        <div class="sidebar-section">
+          <div class="sidebar-section-title">Tags</div>
+          <ul class="sidebar-list">
+          <li><a href="/blog/tags/#%E6%97%A7%E5%9C%B0%E7%8B%B1">旧地狱<span class="count">(10)</span></a></li>
+          <li><a href="/blog/tags/#Crypto">Crypto<span class="count">(9)</span></a></li>
+          <li><a href="/blog/tags/#Soot">Soot<span class="count">(3)</span></a></li>
+          <li><a href="/blog/tags/#Android">Android<span class="count">(3)</span></a></li>
+          <li><a href="/blog/tags/#Lattice">Lattice<span class="count">(3)</span></a></li>
+          <li><a href="/blog/tags/#Tools">Tools<span class="count">(2)</span></a></li>
+          <li><a href="/blog/tags/#RE">RE<span class="count">(2)</span></a></li>
+          <li><a href="/blog/tags/#Java">Java<span class="count">(2)</span></a></li>
+          <li><a href="/blog/tags/#%E6%9D%82%E8%B0%88">杂谈<span class="count">(2)</span></a></li>
+          <li><a href="/blog/tags/#ecc">ecc<span class="count">(2)</span></a></li>
+          <li><a href="/blog/tags/#Algorithm">Algorithm<span class="count">(1)</span></a></li>
+          <li><a href="/blog/tags/#Program%20Analysis">Program Analysis<span class="count">(1)</span></a></li>
+          </ul>
+        </div>
+      </aside>
+      <main class="content">
+        
+        <article>
+          <header class="post-header">
+            <h1>Soot从入门到入土(2)-IR(Jimple)</h1>
+            <div class="post-meta">
+              <time>2023-04-06</time>
+               · Tools
+              <div style="margin-top:4px"><span class="tag">Soot</span> <span class="tag">Android</span> <span class="tag">Tools</span> <span class="tag">RE</span> <span class="tag">Java</span></div>
+            </div>
+          </header>
+          <div class="post-body">
+            <blockquote>
+<p>依稀记得在NJU谭添老师的课上讲过一些</p>
+</blockquote>
+<h2>编译器</h2>
+<p>在了解<strong>IR</strong>（中间代码）之前，首先要了解一个编译器是如何运作的，也就是编译原理，在这里并不会过多赘述。</p>
+<ul>
+<li>词法分析：正则表达式找出单词并判断拼写，打上token进入下一环节</li>
+<li>语法分析：同过上下文无关算法来判断是否符合语法，转化为AST进入下一环节</li>
+<li>语义分析：通过属性语法来判断是否有问题，包括作用域，类型检查等等，生成修饰过的AST</li>
+<li>优化：生成IR，并进行各种优化</li>
+<li>目标代码生成：通过IR生成目标代码</li>
+</ul>
+<blockquote>
+<p>静态分析通常是在IR上进行的，所以也称IR为静态分析的基石</p>
+</blockquote>
+<h2>3AC(3-Address Code)</h2>
+<p>三地址码是一种常见的中间代码形式，而Soot就是一种三地址码。</p>
+<p>格式：在一个语句右侧只有一个操作符。</p>
+<p>常见的形式如下所示：</p>
+<pre><code class="hljs language-java">x = y bop z 		<span class="hljs-comment">//bop 指二元运算符</span>
+x = uop z           <span class="hljs-comment">//uop 指一元运算符</span>
+x = y
+<span class="hljs-keyword">goto</span> L
+<span class="hljs-keyword">if</span> x <span class="hljs-keyword">goto</span> L
+<span class="hljs-keyword">if</span> x rop y <span class="hljs-keyword">goto</span> L   <span class="hljs-comment">//rop 指二元关系判断运算符</span>
+</code></pre><p>在产生三地址码的过程中，不可避免的要产生中间变量以满足其要求：</p>
+<pre><code class="hljs language-java">a = b + c - d * e
+-----------------
+t1 = d * <span class="hljs-type">e</span>
+<span class="hljs-variable">t2</span> <span class="hljs-operator">=</span> c - <span class="hljs-type">t1</span>
+<span class="hljs-variable">a</span> <span class="hljs-operator">=</span> b + t2
+</code></pre><h2>Jimple语法与API</h2>
+<ul>
+<li><strong>invokespecial</strong>：用来调用构造函数，父类方法和私有方法（constructor、superclass method、private method）。</li>
+<li><strong>invokevirtual</strong>：用来调用实例方法、基于类进行分派（instance method、virtual dispatch）</li>
+<li><strong>invokeinterface</strong>：用来调用接口中的方法</li>
+<li><strong>invokestatic</strong>：用来调用静态方法</li>
+</ul>
+<blockquote>
+<p>实际上在学习了编译原理之后，对于整个程序大致流程会产生什么样的中间代码已经基本清楚了，但对于不同的编程语言产生的一些接口还需要进一步的实践了解</p>
+</blockquote>
+<h2>Jimple示例</h2>
+<p>Jimple是一种典型的三地址码。下面给出一些简单的Java代码和对应的Jimple代码作为示例：</p>
+<h3>do-while 循环</h3>
+<pre><code class="hljs language-java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">DoWhileLoop3AC</span>{
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">main</span><span class="hljs-params">(String[] args)</span>{
+        <span class="hljs-type">int</span>[] arr = <span class="hljs-keyword">new</span> <span class="hljs-title class_">int</span>[<span class="hljs-number">10</span>];
+        <span class="hljs-type">int</span> <span class="hljs-variable">i</span> <span class="hljs-operator">=</span> <span class="hljs-number">0</span>;
+        <span class="hljs-keyword">do</span> {
+            i = i + <span class="hljs-number">1</span>;
+        }<span class="hljs-keyword">while</span>(arr[i] &lt; <span class="hljs-number">10</span>)
+    }
+}
+</code></pre><pre><code class="hljs language-jimple"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-type">static</span> <span class="hljs-type">void</span> <span class="hljs-title">main</span><span class="hljs-params">(java.lang.<span class="hljs-type">String</span>[])</span>
+</span>{
+    java.lang.<span class="hljs-type">String</span>[] r0;
+    <span class="hljs-type">int</span>[] r1;
+    <span class="hljs-type">int</span> $i0,i1;
+
+    r0 := @parameter0: java.lang.<span class="hljs-type">String</span>[];
+    r1 = <span class="hljs-built_in">newarray</span> (<span class="hljs-type">int</span>)[<span class="hljs-number">10</span>];
+    i1 = <span class="hljs-number">0</span>;
+    
+label1:
+    i1 = i1 + <span class="hljs-number">1</span>;
+    $i0 = r1[i1];
+    <span class="hljs-keyword">if</span> $i0 &lt; <span class="hljs-number">10</span> <span class="hljs-keyword">goto</span> label1;
+
+    <span class="hljs-keyword">return</span>;
+}
+</code></pre><h3>方法调用</h3>
+<pre><code class="hljs language-java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">MethodCall3AC</span>{
+
+    String <span class="hljs-title function_">foo</span><span class="hljs-params">(String para1,String para2)</span>{
+        <span class="hljs-keyword">return</span> para1 + <span class="hljs-string">&quot; &quot;</span> + para2;
+    }
+    
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">main</span><span class="hljs-params">(String[] args)</span>{
+        <span class="hljs-type">MehtodCall3AC</span> <span class="hljs-variable">mc</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">MehtodCall3AC</span>();
+        <span class="hljs-type">String</span> <span class="hljs-variable">result</span> <span class="hljs-operator">=</span> mc.foo(<span class="hljs-string">&quot;hello&quot;</span>,<span class="hljs-string">&quot;world&quot;</span>); 
+    }
+    
+}
+</code></pre><pre><code class="hljs language-jimple">java.lang.<span class="hljs-keyword">String</span> foo(java.lang.<span class="hljs-keyword">String</span>,java.lang.<span class="hljs-keyword">String</span>)
+{
+    MethodCall3AC r0;
+    java.lang.<span class="hljs-keyword">String</span> r1, r2, <span class="hljs-variable">$r7</span>;
+    java.lang.StringBuilder <span class="hljs-variable">$r3</span>,<span class="hljs-variable">$r4</span>,<span class="hljs-variable">$r5</span>,<span class="hljs-variable">$r6</span>;
+
+    r0 :<span class="hljs-type"></span>= <span class="hljs-meta">@this: MethodCall3AC;</span>
+    r1 :<span class="hljs-type"></span>= <span class="hljs-meta">@parameterr0: java.lang.String;</span>
+    r2 :<span class="hljs-type"></span>= <span class="hljs-meta">@parameterr1: java.lang.String;</span>
+    <span class="hljs-variable">$r3</span> = <span class="hljs-keyword">new</span><span class="hljs-type"></span> java.lang.StringBulider;
+    
+    specialinvoke <span class="hljs-variable">$r3</span>.&lt;java.lang.StringBulider: <span class="hljs-type">void</span>&lt;init&gt;()&gt;();
+    <span class="hljs-variable">$r4</span> = virtualinvoke <span class="hljs-variable">$r3</span>.&lt;java.lang.StringBulider: <span class="hljs-type">java</span>.lang.StringBulider append(java.lang.<span class="hljs-keyword">String</span>)&gt;(r1);
+    <span class="hljs-variable">$r5</span> = virtualinvoke <span class="hljs-variable">$r4</span>.&lt;java.lang.StringBulider: <span class="hljs-type">java</span>.lang.StringBulider append(java.lang.<span class="hljs-keyword">String</span>)&gt;(<span class="hljs-string">&quot; &quot;</span>);
+    <span class="hljs-variable">$r6</span> = virtualinvoke <span class="hljs-variable">$r5</span>.&lt;java.lang.StringBulider: <span class="hljs-type">java</span>.lang.StringBulider append(java.lang.<span class="hljs-keyword">String</span>)&gt;(r2);
+    <span class="hljs-variable">$r7</span> = virtualinvoke <span class="hljs-variable">$r6</span>.&lt;java.lang.StringBulider: <span class="hljs-type">java</span>.lang.<span class="hljs-keyword">String</span> toString()&gt;();
+
+    <span class="hljs-keyword">return</span> <span class="hljs-variable">$r7</span>;
+}
+
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> void main(java.lang.<span class="hljs-keyword">String</span>[])
+{
+    java.lang.<span class="hljs-keyword">String</span>[] r0;
+    MethodCall3AC <span class="hljs-variable">$r1</span>;
+
+    r0:<span class="hljs-type"></span>= <span class="hljs-meta">@parameter0: java.lang.String[];</span>
+    <span class="hljs-variable">$r1</span>= <span class="hljs-keyword">new</span><span class="hljs-type"></span> MethodCall3AC;
+    
+    specialinvoke <span class="hljs-variable">$r1</span>.&lt;MethodCall3AC: <span class="hljs-type">void</span>&lt;init&gt;()&gt;();
+    virtualinvoke <span class="hljs-variable">$r1</span>.&lt;MethodCall3AC: <span class="hljs-type">java</span>.lang.<span class="hljs-keyword">String</span> foo(java.lang.Stirng,java.lang.<span class="hljs-keyword">String</span>)&gt;(<span class="hljs-string">&quot;hello&quot;</span>,<span class="hljs-string">&quot;world&quot;</span>);
+    
+    <span class="hljs-keyword">return</span>;
+}
+</code></pre><h3>类</h3>
+<pre><code class="hljs language-java"><span class="hljs-keyword">package</span> a.b.c;
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">Class3AC</span>{
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-type">double</span> <span class="hljs-variable">pi</span> <span class="hljs-operator">=</span> <span class="hljs-number">3.14</span>;
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">main</span><span class="hljs-params">(String[] args)</span>{
+    }
+    
+}
+</code></pre><pre><code class="hljs language-jimple"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">a</span>.b.c.Class3AC extends java.lang.Object
+{
+    <span class="hljs-keyword">public</span> <span class="hljs-type">static</span> <span class="hljs-keyword">final</span> <span class="hljs-type">double</span> pi;
+
+    <span class="hljs-keyword">public</span> <span class="hljs-type">void</span> &lt;init&gt;()
+    {
+        a.b.c.Class3AC r0;
+        r0 := @<span class="hljs-keyword">this</span>: a.b.c.Class3AC;
+        specialinvoke r<span class="hljs-number">0.</span>&lt;java.lang.Object: <span class="hljs-type">void</span> &lt;init&gt;()&gt;();
+        <span class="hljs-keyword">return</span>;
+    }
+    
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-type">static</span> <span class="hljs-type">void</span> <span class="hljs-title">main</span><span class="hljs-params">(java.lang.<span class="hljs-type">String</span>[])</span>
+    </span>{
+        java.lang.<span class="hljs-type">String</span>[] r0;
+        r0:= @parameter0: java.lang.<span class="hljs-type">String</span>[];
+        <span class="hljs-keyword">return</span>;
+    }
+    <span class="hljs-keyword">public</span> <span class="hljs-type">static</span> <span class="hljs-type">void</span> &lt;clinit&gt;()
+    {
+        &lt;a.b.c.Class3AC: <span class="hljs-type">double</span> pi&gt; = <span class="hljs-number">3.14</span>;
+        <span class="hljs-keyword">return</span>;
+    }
+}
+</code></pre>
+          </div>
+        </article>
+      </main>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    © 2026 MMonster
+  </footer>
+
+  <script>
+    function toggleSidebar() {
+      document.querySelector('.sidebar').classList.toggle('sidebar-open');
+      document.querySelector('.sidebar-overlay').classList.toggle('active');
+    }
+    // Top nav: scrolled style + hide on scroll down, show on scroll up
+    (function() {
+      var nav = document.getElementById('topNav');
+      if (!nav) return;
+      var lastY = 0;
+      window.addEventListener('scroll', function() {
+        var y = window.scrollY;
+        nav.classList.toggle('scrolled', y > 100);
+        if (y > window.innerHeight * 0.8) {
+          nav.classList.toggle('nav-hidden', y > lastY);
+        } else {
+          nav.classList.remove('nav-hidden');
+        }
+        lastY = y;
+      });
+    })();
+  </script>
+</body>
+</html>

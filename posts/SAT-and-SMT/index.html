@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SAT and SMT - MMonster的小窝</title>
+  <link rel="stylesheet" href="/blog/css/style.css">
+  <link rel="stylesheet" href="/blog/css/hljs.css">
+    <script>
+      MathJax = {
+        tex: { inlineMath: [['$','$'], ['\\(','\\)']], displayMath: [['$$','$$'], ['\\[','\\]']] },
+        svg: { fontCache: 'global' }
+      };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
+</head>
+<body>
+  <div class="bg-layer" style="background-image:url('/blog/bg/002.jpg')"></div>
+  
+  <nav class="top-nav" id="topNav">
+    <a href="/blog/">Home</a>
+    <a href="/blog/archives/">Archives</a>
+    <a href="/blog/tags/">Tags</a>
+    <a href="https://github.com/MM0n5Ter">GitHub</a>
+  </nav>
+  
+  <button class="hamburger" onclick="toggleSidebar()" aria-label="Menu">☰</button>
+  <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+  <div class="glass-container">
+    <div class="layout-flex">
+      <aside class="sidebar">
+        
+        <img src="/blog/img/avatar.png" alt="avatar" class="sidebar-avatar">
+        <div class="sidebar-name">MMonster</div>
+        <div class="sidebar-bio">Security · Code · Life</div>
+
+        <div class="sidebar-section">
+          <div class="sidebar-section-title">Archives</div>
+          <ul class="sidebar-list">
+          <li><a href="/blog/archives/#2025-06">2025-06<span class="count">(1)</span></a></li>
+          <li><a href="/blog/archives/#2023-04">2023-04<span class="count">(3)</span></a></li>
+          <li><a href="/blog/archives/#2023-03">2023-03<span class="count">(2)</span></a></li>
+          <li><a href="/blog/archives/#2021-11">2021-11<span class="count">(1)</span></a></li>
+          <li><a href="/blog/archives/#2021-07">2021-07<span class="count">(2)</span></a></li>
+          <li><a href="/blog/archives/#2021-05">2021-05<span class="count">(1)</span></a></li>
+          </ul>
+        </div>
+
+        <div class="sidebar-section">
+          <div class="sidebar-section-title">Tags</div>
+          <ul class="sidebar-list">
+          <li><a href="/blog/tags/#%E6%97%A7%E5%9C%B0%E7%8B%B1">旧地狱<span class="count">(10)</span></a></li>
+          <li><a href="/blog/tags/#Crypto">Crypto<span class="count">(9)</span></a></li>
+          <li><a href="/blog/tags/#Soot">Soot<span class="count">(3)</span></a></li>
+          <li><a href="/blog/tags/#Android">Android<span class="count">(3)</span></a></li>
+          <li><a href="/blog/tags/#Lattice">Lattice<span class="count">(3)</span></a></li>
+          <li><a href="/blog/tags/#Tools">Tools<span class="count">(2)</span></a></li>
+          <li><a href="/blog/tags/#RE">RE<span class="count">(2)</span></a></li>
+          <li><a href="/blog/tags/#Java">Java<span class="count">(2)</span></a></li>
+          <li><a href="/blog/tags/#%E6%9D%82%E8%B0%88">杂谈<span class="count">(2)</span></a></li>
+          <li><a href="/blog/tags/#ecc">ecc<span class="count">(2)</span></a></li>
+          <li><a href="/blog/tags/#Algorithm">Algorithm<span class="count">(1)</span></a></li>
+          <li><a href="/blog/tags/#Program%20Analysis">Program Analysis<span class="count">(1)</span></a></li>
+          </ul>
+        </div>
+      </aside>
+      <main class="content">
+        
+        <article>
+          <header class="post-header">
+            <h1>SAT and SMT</h1>
+            <div class="post-meta">
+              <time>2025-06-07</time>
+               · Symbolic Execution
+              <div style="margin-top:4px"><span class="tag">Algorithm</span> <span class="tag">Program Analysis</span> <span class="tag">Symbolic Execution</span></div>
+            </div>
+          </header>
+          <div class="post-body">
+            <blockquote>
+<p>To show true and false more clearly, blue variable below means true and red means false.</p>
+</blockquote>
+<h1>SAT: Satisfiability</h1>
+<h2>Basis</h2>
+<p><strong>Literal</strong>: a variable <span class="math-inline">$x$</span> and its negation</p>
+<p><strong>Clause</strong>: a disjunction of literals, like: <span class="math-inline">$x\vee\neg y$</span></p>
+<p><strong>Boolean Assignment</strong>: a mapping of variables to Boolean values.</p>
+<p><strong>SAT</strong>: Constraint satisfaction problem on a set of clauses.</p>
+<ul>
+<li>Given a set of clauses, find a Boolean assignment that makes all clauses true.</li>
+</ul>
+<p>The SAT problems are always defined by <strong>Conjunctive Normal Form</strong>. Any propositional logic formula can be expressed in Conjunctive Normal Form.</p>
+<h2>Methods</h2>
+<h3>Basic Method: Brute-Force</h3>
+<pre><code class="hljs language-javascript"><span class="hljs-title class_">Sat</span>(assign) {
+    <span class="hljs-keyword">if</span> (assign is complete) {
+        <span class="hljs-keyword">if</span> (at least one literal is <span class="hljs-literal">true</span> <span class="hljs-keyword">in</span> each clause)
+            <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>
+        <span class="hljs-keyword">else</span>
+            <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>
+    }
+    <span class="hljs-keyword">else</span> {
+        choose a variable x that has not been assigned
+        <span class="hljs-keyword">return</span> <span class="hljs-title class_">Sat</span>(assign U {x=<span class="hljs-literal">true</span>}) || <span class="hljs-title class_">Sat</span>(assign U {x=<span class="hljs-literal">false</span>})
+    }
+}
+</code></pre><h3>Optimization 1: Conflict Detection</h3>
+<p>This method detect conflict when assigning variables to reduce useless route.</p>
+<pre><code class="hljs language-javascript"><span class="hljs-title class_">Sat</span>(assign) {
+    <span class="hljs-keyword">if</span> (assign has conflict) <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>
+    <span class="hljs-keyword">if</span> (assign is complete) <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>
+    <span class="hljs-keyword">return</span> <span class="hljs-title class_">Sat</span>(assign U {x=<span class="hljs-literal">true</span>}) || <span class="hljs-title class_">Sat</span>(assign U {x=<span class="hljs-literal">false</span>})
+}
+</code></pre><h3>Optimization 2: DPLL</h3>
+<p>DPLL stands for Davis-Putnam-Logemann-Loveland method, which using <strong>Assignment Propagation</strong> method and Conflict Detection together. Assignment Propagation is what we want to introduce now. This method propagate the value of other literal with current assignment.</p>
+<p><strong>Common Propagation Rules</strong></p>
+<ul>
+<li><p><strong>Unit Propagation:</strong> The only unassigned literal must be true if other literals are all false in a clause.</p>
+<p>  {-1, 2, 3} ⇒ 3</p>
+</li>
+<li><p><strong>Unate Propagation:</strong> If a clause contains at least one True literal, it could be deleted. As the value of other literal would not influence the result of this clause.</p>
+</li>
+<li><p><strong>Pure Literal Propagation:</strong> If a variable has only one format in all clauses, we can let the literal contains it be true forever. Then all the clauses contain it could be deleted.</p>
+<p>  {-1, 2 ,3} {-1, -2, 3} {-1, 3, 4}</p>
+</li>
+</ul>
+<pre><code class="hljs language-javascript"><span class="hljs-title function_">DPLL</span>(<span class="hljs-params">assign</span>) {
+    assignx = <span class="hljs-title function_">propagation</span>(assign)
+    <span class="hljs-keyword">if</span> (assignx has conflict) <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>
+    <span class="hljs-keyword">if</span> (assignx is complete) <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>
+    <span class="hljs-keyword">return</span> <span class="hljs-title function_">DPLL</span>(assignx U {x=<span class="hljs-literal">true</span>}) || <span class="hljs-title function_">DPLL</span>(assignx U {x=<span class="hljs-literal">false</span>})
+}
+</code></pre><p><strong>High-level Propagation</strong></p>
+<ul>
+<li><strong>Probing:</strong> If x=0 and x=1 can both lead to y=1, then y could be propagated as 1.</li>
+<li><strong>Equivalence Classes:</strong> Check the equivalence clauses and keep only one of them.</li>
+</ul>
+<p><strong>Notice! In some conditions, propagation might be slower and more inefficient than the basic Brute-Force, so it should be discussed in procedure whether to do the propagation.</strong></p>
+<h3>Optimization 3: Branching Heuristics</h3>
+<p>The choice which variable is assigned first could influence efficiency largely. Take the clauses below as an example. If we choose to assign 1 or 2 first, we could find out they could not be satisfied rapidly. But if we choose 3-8, we need to perform several iterations.</p>
+<ul>
+<li>{1, -2} {1, 2} {-1, -2} {-1, 2} {3, 4, 5, 6, 7, 8}</li>
+</ul>
+<p>Then we introduce <strong>Branching Heuristics</strong></p>
+<p><strong>Based on clause set:</strong></p>
+<ul>
+<li>Select variables in the shortest clauses.</li>
+<li>Select variables that appear most frequently.</li>
+</ul>
+<p><strong>Based on historical data:</strong></p>
+<ul>
+<li>Select variables that have previously caused conflicts.</li>
+</ul>
+<h3>Optimization 4: CDCL</h3>
+<p>CDCL stands for <strong>Conflict-Driven Clause Learning</strong>. When facing new conflict, the solver will learn the new conflict as a new constraint. This process is called Clause Learning.</p>
+<p>Note that the iteration starting from the newly added constraints actually ensures that previously explored conflicting assignments will not occur.</p>
+<ul>
+<li>Therefore, there is no need to record the assignments that have been traversed before; you can simply choose any remaining variable and assignment each time.</li>
+<li>Deriving a conflict from an empty assignment means UNSAT.</li>
+</ul>
+<p>Example:</p>
+<p><img loading="lazy" src="/blog/img/notion/33db46dc-0.png" alt="Untitled.png"></p>
+<pre><code class="hljs language-javascript"><span class="hljs-title function_">cdcl</span>(<span class="hljs-params"></span>) {
+    assign = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Assignment</span>
+    <span class="hljs-keyword">while</span> (<span class="hljs-literal">true</span>) {
+        assignx = <span class="hljs-title function_">propagation</span>(assign)
+        <span class="hljs-keyword">if</span> (assignx has conflict) {
+            <span class="hljs-keyword">if</span> (assign is <span class="hljs-title class_">None</span>) <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+            <span class="hljs-title function_">addNewConstraint</span>()
+            assign.<span class="hljs-title function_">undoAssignment</span>()
+        }
+        <span class="hljs-keyword">else</span> {
+            <span class="hljs-keyword">if</span> (assignx is complete) <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+            select a unassigned variable, <span class="hljs-keyword">let</span> it be <span class="hljs-literal">true</span> <span class="hljs-keyword">of</span> <span class="hljs-literal">false</span>
+            add it to assign
+        }
+    }
+}
+</code></pre><h3>Optimization 4.1: VSIDS</h3>
+<p>VSIDS stands for <strong>Variable State Independent Decaying Sum</strong>. </p>
+<ul>
+<li>Score all variables based on the frequency they appear.</li>
+<li>Add points to the variables in a clause when a new clause is added.</li>
+<li>Divide the score of all variables by a constant every once in a while.</li>
+</ul>
+<h1>SMT: Satisfiability Modulo Theories</h1>
+<h2>Basis</h2>
+<p>SAT solves whether a propositional logic formula is satisfiable, which looks like <span class="math-inline">$A\vee B\wedge \neg C$</span>. While formulas in real life may look like <span class="math-inline">$a+b<c\vee f(a)>b$</span>. Many symbols are not contained in the logical system, making the formula impossible to do deductions.</p>
+<p><strong>Theory:</strong> Theory is used to assign meanings to these types of symbols. A theory consists of a set of <strong>axiom</strong>s and the conclusions that can be derived from these axioms.</p>
+<p><strong>SMT:</strong> Given a set of theories, finding the satisfiability of this set of theories.</p>
+<h3>EUP (Equality with Uninterpreted Functions)</h3>
+<p>EUP is a common theory. The axioms it contained is showed below:</p>
+<ul>
+<li><span class="math-inline">$a=b \Rightarrow f(a)=f(b)$</span></li>
+<li><span class="math-inline">$a=b\Leftrightarrow \neg(a\ne b)$</span></li>
+</ul>
+<h2>Eager Method</h2>
+<p>Transform the SMT problem into a SAT problem, then solve it with the SAT solver</p>
+<p>The example is complex, imagine by yourself……</p>
+<p><strong>Problems of Eager Method:</strong></p>
+<ul>
+<li>Many theories have specialized solving algorithms, such as: EUF (Equality with Uninterpreted Functions) can be solved using a fixed-point algorithm that continuously merges equivalence classes. After being encoded into SAT, SAT solvers cannot take advantage of these algorithms.</li>
+<li>The modularity is not high. Each theory requires a separate encoding method. When using different theories together, it is necessary to ensure that the encoding methods are compatible.</li>
+</ul>
+<h2>Lazy Method</h2>
+<p>A black-box containing SAT solver and each kind of theory solver. Here is an example how Lazy Method solve a problem.</p>
+<p><div class="math-display">$
+g(a)=c \wedge(f(g(a)) \neq f(c) \vee g(a)=d) \wedge c \neq d
+$</div></p>
+<ul>
+<li><p>Encode these constrains, let 1 be the first formula and -2 be the second formula and so on. (For inequation, we commonly do NOR for it) Then the problem above could be transformed into clauses: {1}, {-2, 3}, {-4}</p>
+</li>
+<li><p>The SAT solver returns a result SAT and an assignment {1, 2, 4}</p>
+</li>
+<li><p>Turn the assignment into formula and put into the EUF solver:</p>
+<p>  <span class="math-inline">$\{g(a)=c ,\ f(g(a)) \neq f(c) ,\ c \neq d\}$</span></p>
+</li>
+<li><p>EUF solver returns UNSAT</p>
+</li>
+<li><p>Do clause learning. The input of SAT solver will be {1}, {-2, 3}, {-4}, {-1, 2, 4}</p>
+</li>
+<li><p>The SAT solver returns SAT and an assignment {1, 2, 3, 4}</p>
+</li>
+<li><p>EUF solver returns UNSAT</p>
+</li>
+<li><p>Do clause learning. The input of SAT solver will be {1}, {-2, 3}, {-4}, {-1, 2, 4}, {-1, -2, -3, 4}</p>
+</li>
+<li><p>SAT solver returns UNSAT</p>
+</li>
+</ul>
+<p><strong>Problems of Lazy Method:</strong></p>
+<p>Think about the example below, the EUF solver could tell that {1}, {-4} has conflict directly. But SAT solver do not have such knowledge. This could lead to useless iteration. So we think about adding interface to theory solver which could let SAT know other information as what we have done in <strong>CDCL</strong>.</p>
+<p><div class="math-display">$
+a=b \wedge(f(g(a)) \neq f(c) \vee g(a)=d) \wedge a \neq b
+$</div></p>
+<h2>DPLL(T)</h2>
+<h3>Interface Function</h3>
+<p><strong>propagation:</strong></p>
+<ul>
+<li>Input: a set of formulas and known Ture or False of some formulas</li>
+<li>Output: formulas in this set that could be propagated</li>
+</ul>
+<p><strong>get_unsatisfiable_core:</strong></p>
+<ul>
+<li>Input: a set of formulas with known conflict</li>
+<li>Output: the minimum sub set of these formulas that still cause the conflict</li>
+</ul>
+<h3>Core Algorithm</h3>
+<p>Break the SAT black box by integrating theoretical solvers centered around the CDCL.</p>
+<pre><code class="hljs language-javascript"><span class="hljs-title function_">dpll_t</span>(<span class="hljs-params"></span>) {
+    assign = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Assignment</span>
+    <span class="hljs-keyword">while</span> (<span class="hljs-literal">true</span>) {
+        <span class="hljs-keyword">if</span> (!<span class="hljs-title function_">check</span>(assign)) {
+            <span class="hljs-keyword">if</span> (assign is <span class="hljs-title class_">None</span>) <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+            <span class="hljs-title function_">addNewConstraint</span>();
+            assign.<span class="hljs-title function_">undoAssignment</span>()
+        }
+        <span class="hljs-keyword">else</span> {
+            <span class="hljs-keyword">if</span> (assignx is complete) <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+            select a unassigned variable, <span class="hljs-keyword">let</span> it be <span class="hljs-literal">true</span> <span class="hljs-keyword">of</span> <span class="hljs-literal">false</span>
+            add it to assign
+        }
+    }
+}
+
+<span class="hljs-title function_">check</span>(<span class="hljs-params">assign</span>) {
+    <span class="hljs-keyword">do</span> {
+        assignx = <span class="hljs-title function_">propagation</span>(assign);
+        <span class="hljs-keyword">if</span>(assignx has conflict) <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+        <span class="hljs-keyword">if</span>(<span class="hljs-title class_">TheorySolver</span>(assignx) = <span class="hljs-variable constant_">UNSAT</span>) <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+        assignx = <span class="hljs-title class_">TheorySolverPropagation</span>(assign);
+        <span class="hljs-keyword">if</span>(assignx has conflict) <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+    } <span class="hljs-keyword">while</span>(assignx != assign)
+    <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+}
+
+<span class="hljs-title function_">addNewConstrain</span>(<span class="hljs-params"></span>) {
+    <span class="hljs-keyword">if</span>(conflict <span class="hljs-keyword">in</span> propagation) <span class="hljs-title class_">ConflictSet</span> = <span class="hljs-title class_">Predecessor</span> <span class="hljs-keyword">of</span> the conflict clause.;
+    <span class="hljs-keyword">else</span> <span class="hljs-title class_">ConflictSet</span> = <span class="hljs-title class_">TheorySolver</span>.<span class="hljs-title function_">get_unsatisfiable_core</span>();
+    <span class="hljs-title function_">add</span>(<span class="hljs-title function_">NOR</span>(<span class="hljs-title class_">ConflictSet</span>));
+}
+</code></pre><p>Example:</p>
+<p><div class="math-display">$
+g(a)=c \wedge (f(g(a)) \ne f(c) \vee g(a)=d) \wedge (c \ne d \vee d=e) 
+$</div></p>
+<p>Transform it into clauses: {1}, {-2, 3}, {-4, 5}</p>
+<table>
+<thead>
+<tr>
+<th>Clauses</th>
+<th>Assignment</th>
+<th>Propagation</th>
+<th>Method</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>{1}{-2, 3}{-4, 5}</td>
+<td>{}</td>
+<td>{1}</td>
+<td>Unit Propagation</td>
+</tr>
+<tr>
+<td>{1}{-2, 3}{-4, 5}</td>
+<td>{}</td>
+<td>{1, 2}</td>
+<td>T-Propagation</td>
+</tr>
+<tr>
+<td>{1}{-2, 3}{-4, 5}</td>
+<td>{}</td>
+<td>{1, 2, 3}</td>
+<td>Unit Propagation</td>
+</tr>
+<tr>
+<td>{1}{-2, 3}{-4, 5}</td>
+<td>{-4}</td>
+<td>conflict set: {1, 3, -4}</td>
+<td>T-Solver UNSAT</td>
+</tr>
+<tr>
+<td>{1}{-2, 3}{-4, 5}{-1, -3, 4}</td>
+<td>{}</td>
+<td>{1, 2, 3, 4, 5}</td>
+<td>Unit Propagation</td>
+</tr>
+</tbody></table>
+<h2>Nelson-Oppen Method</h2>
+<p>This method is used to combine different theory solvers in a modular way. It ensures that the combined solution respects the individual theory constraints while solving the overall SMT problem.</p>
+
+          </div>
+        </article>
+      </main>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    © 2026 MMonster
+  </footer>
+
+  <script>
+    function toggleSidebar() {
+      document.querySelector('.sidebar').classList.toggle('sidebar-open');
+      document.querySelector('.sidebar-overlay').classList.toggle('active');
+    }
+    // Top nav: scrolled style + hide on scroll down, show on scroll up
+    (function() {
+      var nav = document.getElementById('topNav');
+      if (!nav) return;
+      var lastY = 0;
+      window.addEventListener('scroll', function() {
+        var y = window.scrollY;
+        nav.classList.toggle('scrolled', y > 100);
+        if (y > window.innerHeight * 0.8) {
+          nav.classList.toggle('nav-hidden', y > lastY);
+        } else {
+          nav.classList.remove('nav-hidden');
+        }
+        lastY = y;
+      });
+    })();
+  </script>
+</body>
+</html>

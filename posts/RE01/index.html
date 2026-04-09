@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RE Note 1 - MMonster的小窝</title>
+  <link rel="stylesheet" href="/blog/css/style.css">
+  <link rel="stylesheet" href="/blog/css/hljs.css">
+</head>
+<body>
+  <div class="bg-layer" style="background-image:url('/blog/bg/002.jpg')"></div>
+  
+  <nav class="top-nav" id="topNav">
+    <a href="/blog/">Home</a>
+    <a href="/blog/archives/">Archives</a>
+    <a href="/blog/tags/">Tags</a>
+    <a href="https://github.com/MM0n5Ter">GitHub</a>
+  </nav>
+  
+  <button class="hamburger" onclick="toggleSidebar()" aria-label="Menu">☰</button>
+  <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+  <div class="glass-container">
+    <div class="layout-flex">
+      <aside class="sidebar">
+        
+        <img src="/blog/img/avatar.png" alt="avatar" class="sidebar-avatar">
+        <div class="sidebar-name">MMonster</div>
+        <div class="sidebar-bio">Security · Code · Life</div>
+
+        <div class="sidebar-section">
+          <div class="sidebar-section-title">Archives</div>
+          <ul class="sidebar-list">
+          <li><a href="/blog/archives/#2025-06">2025-06<span class="count">(1)</span></a></li>
+          <li><a href="/blog/archives/#2023-04">2023-04<span class="count">(3)</span></a></li>
+          <li><a href="/blog/archives/#2023-03">2023-03<span class="count">(2)</span></a></li>
+          <li><a href="/blog/archives/#2021-11">2021-11<span class="count">(1)</span></a></li>
+          <li><a href="/blog/archives/#2021-07">2021-07<span class="count">(2)</span></a></li>
+          <li><a href="/blog/archives/#2021-05">2021-05<span class="count">(1)</span></a></li>
+          </ul>
+        </div>
+
+        <div class="sidebar-section">
+          <div class="sidebar-section-title">Tags</div>
+          <ul class="sidebar-list">
+          <li><a href="/blog/tags/#%E6%97%A7%E5%9C%B0%E7%8B%B1">旧地狱<span class="count">(10)</span></a></li>
+          <li><a href="/blog/tags/#Crypto">Crypto<span class="count">(9)</span></a></li>
+          <li><a href="/blog/tags/#Soot">Soot<span class="count">(3)</span></a></li>
+          <li><a href="/blog/tags/#Android">Android<span class="count">(3)</span></a></li>
+          <li><a href="/blog/tags/#Lattice">Lattice<span class="count">(3)</span></a></li>
+          <li><a href="/blog/tags/#Tools">Tools<span class="count">(2)</span></a></li>
+          <li><a href="/blog/tags/#RE">RE<span class="count">(2)</span></a></li>
+          <li><a href="/blog/tags/#Java">Java<span class="count">(2)</span></a></li>
+          <li><a href="/blog/tags/#%E6%9D%82%E8%B0%88">杂谈<span class="count">(2)</span></a></li>
+          <li><a href="/blog/tags/#ecc">ecc<span class="count">(2)</span></a></li>
+          <li><a href="/blog/tags/#Algorithm">Algorithm<span class="count">(1)</span></a></li>
+          <li><a href="/blog/tags/#Program%20Analysis">Program Analysis<span class="count">(1)</span></a></li>
+          </ul>
+        </div>
+      </aside>
+      <main class="content">
+        
+        <article>
+          <header class="post-header">
+            <h1>RE Note 1</h1>
+            <div class="post-meta">
+              <time>2021-07-20</time>
+               · 旧地狱
+              <div style="margin-top:4px"><span class="tag">Crypto</span> <span class="tag">旧地狱</span></div>
+            </div>
+          </header>
+          <div class="post-body">
+            <h3>基础的汇编语法</h3>
+<p>x86/x64汇编指令的基本格式： 操作码  操作数1  操作数2</p>
+<p>基本语法：</p>
+<ul>
+<li>数据传输指令：mov<ul>
+<li>mov rax, rbx    rax = rbx</li>
+<li>mov qword ptr [rdi], rax    *(rdi) = rax</li>
+</ul>
+</li>
+<li>取地址指令：lea <ul>
+<li>lea rax, [rsi]    rax = &amp;*(rsi)</li>
+</ul>
+</li>
+<li>算术运算指令：add, sub<ul>
+<li>add rax, rbx    rax += rbx</li>
+<li>sub rax, rbx    rax -= rbx</li>
+</ul>
+</li>
+<li>逻辑运算符：and, xor<ul>
+<li>and rax, rbx    rax &amp;= rbx</li>
+<li>xor rax, rbx    rax ^= rbx</li>
+</ul>
+</li>
+<li>函数调用指令：call<ul>
+<li>call 0x401000    执行0x401000地址的函数</li>
+</ul>
+</li>
+<li>函数返回指令：ret</li>
+<li>比较指令：cmp<ul>
+<li>cmp rax, rbx    根据rax与rbx的比较结果改变标志位</li>
+</ul>
+</li>
+<li>无条件跳转指令：jmp</li>
+<li>栈操作：push pop</li>
+</ul>
+<p>⬆其实我觉得没啥用，多看看汇编代码就熟了（</p>
+<h2>攻防世界的几道入门题</h2>
+<h4><strong>re1</strong></h4>
+<p>看csdn上一堆堆大佬讲了大量乱七八糟的思路和方法</p>
+<p>我直接把flag搜出来了</p>
+<p>乐死了</p>
+<p><img loading="lazy" src="/blog/img/old/image-20210710171521536.png" alt="image-20210710171521536"></p>
+<h4><strong>Hello, CTF</strong></h4>
+<p>放进ida中，_main函数反汇编出来的伪代码如下</p>
+<pre><code class="hljs language-c"><span class="hljs-built_in">strcpy</span>(v13, <span class="hljs-string">&quot;437261636b4d654a757374466f7246756e&quot;</span>);	#给v13一个奇怪的赋值
+  <span class="hljs-keyword">while</span> ( <span class="hljs-number">1</span> )
+  {
+    <span class="hljs-built_in">memset</span>(v10, <span class="hljs-number">0</span>, <span class="hljs-keyword">sizeof</span>(v10));	v10初始化为全<span class="hljs-number">0</span>
+    v11 = <span class="hljs-number">0</span>;
+    v12 = <span class="hljs-number">0</span>;
+    sub_40134B(aPleaseInputYou, v6);
+    <span class="hljs-built_in">scanf</span>(<span class="hljs-string">&quot;%s&quot;</span>, v9);	#读入v9
+    <span class="hljs-title function_">if</span> <span class="hljs-params">( <span class="hljs-built_in">strlen</span>(v9) &gt; <span class="hljs-number">0x11</span> )</span>
+      <span class="hljs-keyword">break</span>;
+    <span class="hljs-keyword">for</span> ( i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-number">17</span>; ++i )
+    {
+      v4 = v9[i];
+      <span class="hljs-keyword">if</span> ( !v4 )
+        <span class="hljs-keyword">break</span>;
+      <span class="hljs-built_in">sprintf</span>(Buffer, <span class="hljs-string">&quot;%x&quot;</span>, v4);	#Buffer=v4(<span class="hljs-number">16</span>进制)	&lt;-此处为关键
+      <span class="hljs-built_in">strcat</span>(v10, Buffer);	#将Buffer接到v10后
+    }
+    <span class="hljs-keyword">if</span> ( !<span class="hljs-built_in">strcmp</span>(v10, v13) )	#比较v10和v13，可见v10为一个关键值
+      sub_40134B(aSuccess, v7);
+    <span class="hljs-keyword">else</span>
+      sub_40134B(aWrong, v7);
+  }
+</code></pre><p>由于%x为16进制标志，所以强猜v13的赋值为某条信息的16进制，转换之后得出flag：CrackMeJustForFun</p>
+<h4><strong>Open_Source</strong></h4>
+<p>没啥好说的，白给c代码，按照那些条件一一对应就能直接算出来。</p>
+
+          </div>
+        </article>
+      </main>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    © 2026 MMonster
+  </footer>
+
+  <script>
+    function toggleSidebar() {
+      document.querySelector('.sidebar').classList.toggle('sidebar-open');
+      document.querySelector('.sidebar-overlay').classList.toggle('active');
+    }
+    // Top nav: scrolled style + hide on scroll down, show on scroll up
+    (function() {
+      var nav = document.getElementById('topNav');
+      if (!nav) return;
+      var lastY = 0;
+      window.addEventListener('scroll', function() {
+        var y = window.scrollY;
+        nav.classList.toggle('scrolled', y > 100);
+        if (y > window.innerHeight * 0.8) {
+          nav.classList.toggle('nav-hidden', y > lastY);
+        } else {
+          nav.classList.remove('nav-hidden');
+        }
+        lastY = y;
+      });
+    })();
+  </script>
+</body>
+</html>

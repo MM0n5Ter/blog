@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ECC Note 1 - MMonster的小窝</title>
+  <link rel="stylesheet" href="/blog/css/style.css">
+  <link rel="stylesheet" href="/blog/css/hljs.css">
+    <script>
+      MathJax = {
+        tex: { inlineMath: [['$','$'], ['\\(','\\)']], displayMath: [['$$','$$'], ['\\[','\\]']] },
+        svg: { fontCache: 'global' }
+      };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
+</head>
+<body>
+  <div class="bg-layer" style="background-image:url('/blog/bg/002.jpg')"></div>
+  
+  <nav class="top-nav" id="topNav">
+    <a href="/blog/">Home</a>
+    <a href="/blog/archives/">Archives</a>
+    <a href="/blog/tags/">Tags</a>
+    <a href="https://github.com/MM0n5Ter">GitHub</a>
+  </nav>
+  
+  <button class="hamburger" onclick="toggleSidebar()" aria-label="Menu">☰</button>
+  <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+  <div class="glass-container">
+    <div class="layout-flex">
+      <aside class="sidebar">
+        
+        <img src="/blog/img/avatar.png" alt="avatar" class="sidebar-avatar">
+        <div class="sidebar-name">MMonster</div>
+        <div class="sidebar-bio">Security · Code · Life</div>
+
+        <div class="sidebar-section">
+          <div class="sidebar-section-title">Archives</div>
+          <ul class="sidebar-list">
+          <li><a href="/blog/archives/#2025-06">2025-06<span class="count">(1)</span></a></li>
+          <li><a href="/blog/archives/#2023-04">2023-04<span class="count">(3)</span></a></li>
+          <li><a href="/blog/archives/#2023-03">2023-03<span class="count">(2)</span></a></li>
+          <li><a href="/blog/archives/#2021-11">2021-11<span class="count">(1)</span></a></li>
+          <li><a href="/blog/archives/#2021-07">2021-07<span class="count">(2)</span></a></li>
+          <li><a href="/blog/archives/#2021-05">2021-05<span class="count">(1)</span></a></li>
+          </ul>
+        </div>
+
+        <div class="sidebar-section">
+          <div class="sidebar-section-title">Tags</div>
+          <ul class="sidebar-list">
+          <li><a href="/blog/tags/#%E6%97%A7%E5%9C%B0%E7%8B%B1">旧地狱<span class="count">(10)</span></a></li>
+          <li><a href="/blog/tags/#Crypto">Crypto<span class="count">(9)</span></a></li>
+          <li><a href="/blog/tags/#Soot">Soot<span class="count">(3)</span></a></li>
+          <li><a href="/blog/tags/#Android">Android<span class="count">(3)</span></a></li>
+          <li><a href="/blog/tags/#Lattice">Lattice<span class="count">(3)</span></a></li>
+          <li><a href="/blog/tags/#Tools">Tools<span class="count">(2)</span></a></li>
+          <li><a href="/blog/tags/#RE">RE<span class="count">(2)</span></a></li>
+          <li><a href="/blog/tags/#Java">Java<span class="count">(2)</span></a></li>
+          <li><a href="/blog/tags/#%E6%9D%82%E8%B0%88">杂谈<span class="count">(2)</span></a></li>
+          <li><a href="/blog/tags/#ecc">ecc<span class="count">(2)</span></a></li>
+          <li><a href="/blog/tags/#Algorithm">Algorithm<span class="count">(1)</span></a></li>
+          <li><a href="/blog/tags/#Program%20Analysis">Program Analysis<span class="count">(1)</span></a></li>
+          </ul>
+        </div>
+      </aside>
+      <main class="content">
+        
+        <article>
+          <header class="post-header">
+            <h1>ECC Note 1</h1>
+            <div class="post-meta">
+              <time>2021-05-30</time>
+               · 旧地狱
+              <div style="margin-top:4px"><span class="tag">ecc</span> <span class="tag">Crypto</span> <span class="tag">旧地狱</span></div>
+            </div>
+          </header>
+          <div class="post-body">
+            <p>原因不明地咕了很久很久。。。</p>
+<p>虽然感觉不太好，但是这次六级已经不准备去考了。</p>
+<h1><strong>1.椭圆曲线的概念</strong></h1>
+<p>椭圆曲线具有以下格式（区别于高中知识）：
+<div class="math-display">$
+y^2\equiv x^3+ax+a\ modp
+$</div>
+<span class="math-inline">$\ast$</span>此处所示<span class="math-inline">$x,y\in\mathbb{Z}_p$</span></p>
+<p><span class="math-inline">$\ast\ast\ 4a^2+27b^2\neq0\ modp$</span>  ，这一约束条件是为了保证该曲线不会自交且有顶点</p>
+<h1><strong>2.椭圆曲线上的加法</strong></h1>
+<p>我们已知<span class="math-inline">$(x_1,y_1),(x_2,y_2)$</span>是在该曲线上的，我们定义曲线上两点的加法是该两点连线的延长线与曲线的另一交点，若为两相同点，则为在该点的切线与曲线的另一交点。
+<div class="math-display">$x_3\equiv s^2-x_1-x_2\ (modp) $</div></p>
+<p><div class="math-display">$y_3\equiv s(x_1-x_3)-y_1\ (modp)$</div></p>
+<p>其中：</p>
+<p><div class="math-display">$s=\frac{y_2-y_1}{x_2-x_1}; 相异点相加$</div></p>
+<p><div class="math-display">$s=\frac{3x_1^2+a}{2y_1}; 相同点相加$</div></p>
+<p>这里的s其实就是那条直线的斜率</p>
+<p>同时我们定义点<span class="math-inline">$P(x_1,y_1)$</span>的逆元为<span class="math-inline">$-P(x_1,-y1)$</span>，它们的关系为：<span class="math-inline">$P+(-P)=\vartheta$</span>，同时<span class="math-inline">$\vartheta$</span>拥有性质：<span class="math-inline">$\forall P,P+\vartheta = P $</span></p>
+<p>我们将<span class="math-inline">$\vartheta$</span>命名为单位元，它位于椭圆曲线图上的无限远处</p>
+<h1><strong>3.使用椭圆曲线构造离散对数问题</strong></h1>
+<p>曲线上的所有点刚好构成一个阿贝尔群，且对于一个椭圆曲线，存在<span class="math-inline">$k$</span>，使得<span class="math-inline">$kP+P=P$</span>，即<span class="math-inline">$kP=\vartheta$</span>这个<span class="math-inline">$k$</span>被称为阶</p>
+<p>我们有Hasse&#39;s定理来确定阶的范围（p为模数）：
+<div class="math-display">$
+p+1-2\sqrt{p}<E<p+1+2\sqrt{p}
+$</div>
+而已知<span class="math-inline">$P$</span>要求<span class="math-inline">$kP$</span>，我们可以使用类似快速幂的算法</p>
+<h1><strong>4.基于椭圆曲线的Diffie-Hellman密钥交换</strong></h1>
+<p>大前提：使用同一个椭圆方程，同一个素数p和同一个本原元<span class="math-inline">$P(x_0,y_0)$</span></p>
+<p>alice任取a，bob任取b，分别作aP和bP，同时交换所得结果</p>
+<p>alice再对所得结果乘a，bob同理，得到联合密钥<span class="math-inline">$T_{ab}$</span>
+<div class="math-display">$
+T_{ab}=(x_{ab},y_{ab})=abP
+$</div></p>
+<p>P.S:我好短，嘤嘤嘤</p>
+<h1><strong>5.简单代码（记录一下sage上的写法）</strong></h1>
+<pre><code class="hljs language-python">k.&lt;a&gt; = GF(p)
+E = EllipticCurve(k, a, b)
+P = E([x1, y1])
+Q = E([x2, y2])
+<span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(p):
+    <span class="hljs-keyword">if</span> (i * P == Q):
+        <span class="hljs-built_in">print</span>(i)
+        <span class="hljs-keyword">break</span>
+</code></pre>
+          </div>
+        </article>
+      </main>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    © 2026 MMonster
+  </footer>
+
+  <script>
+    function toggleSidebar() {
+      document.querySelector('.sidebar').classList.toggle('sidebar-open');
+      document.querySelector('.sidebar-overlay').classList.toggle('active');
+    }
+    // Top nav: scrolled style + hide on scroll down, show on scroll up
+    (function() {
+      var nav = document.getElementById('topNav');
+      if (!nav) return;
+      var lastY = 0;
+      window.addEventListener('scroll', function() {
+        var y = window.scrollY;
+        nav.classList.toggle('scrolled', y > 100);
+        if (y > window.innerHeight * 0.8) {
+          nav.classList.toggle('nav-hidden', y > lastY);
+        } else {
+          nav.classList.remove('nav-hidden');
+        }
+        lastY = y;
+      });
+    })();
+  </script>
+</body>
+</html>

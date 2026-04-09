@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gradle文件中依赖项部分详解 - MMonster的小窝</title>
+  <link rel="stylesheet" href="/blog/css/style.css">
+  <link rel="stylesheet" href="/blog/css/hljs.css">
+</head>
+<body>
+  <div class="bg-layer" style="background-image:url('/blog/bg/002.jpg')"></div>
+  
+  <nav class="top-nav" id="topNav">
+    <a href="/blog/">Home</a>
+    <a href="/blog/archives/">Archives</a>
+    <a href="/blog/tags/">Tags</a>
+    <a href="https://github.com/MM0n5Ter">GitHub</a>
+  </nav>
+  
+  <button class="hamburger" onclick="toggleSidebar()" aria-label="Menu">☰</button>
+  <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+  <div class="glass-container">
+    <div class="layout-flex">
+      <aside class="sidebar">
+        
+        <img src="/blog/img/avatar.png" alt="avatar" class="sidebar-avatar">
+        <div class="sidebar-name">MMonster</div>
+        <div class="sidebar-bio">Security · Code · Life</div>
+
+        <div class="sidebar-section">
+          <div class="sidebar-section-title">Archives</div>
+          <ul class="sidebar-list">
+          <li><a href="/blog/archives/#2025-06">2025-06<span class="count">(1)</span></a></li>
+          <li><a href="/blog/archives/#2023-04">2023-04<span class="count">(3)</span></a></li>
+          <li><a href="/blog/archives/#2023-03">2023-03<span class="count">(2)</span></a></li>
+          <li><a href="/blog/archives/#2021-11">2021-11<span class="count">(1)</span></a></li>
+          <li><a href="/blog/archives/#2021-07">2021-07<span class="count">(2)</span></a></li>
+          <li><a href="/blog/archives/#2021-05">2021-05<span class="count">(1)</span></a></li>
+          </ul>
+        </div>
+
+        <div class="sidebar-section">
+          <div class="sidebar-section-title">Tags</div>
+          <ul class="sidebar-list">
+          <li><a href="/blog/tags/#%E6%97%A7%E5%9C%B0%E7%8B%B1">旧地狱<span class="count">(10)</span></a></li>
+          <li><a href="/blog/tags/#Crypto">Crypto<span class="count">(9)</span></a></li>
+          <li><a href="/blog/tags/#Soot">Soot<span class="count">(3)</span></a></li>
+          <li><a href="/blog/tags/#Android">Android<span class="count">(3)</span></a></li>
+          <li><a href="/blog/tags/#Lattice">Lattice<span class="count">(3)</span></a></li>
+          <li><a href="/blog/tags/#Tools">Tools<span class="count">(2)</span></a></li>
+          <li><a href="/blog/tags/#RE">RE<span class="count">(2)</span></a></li>
+          <li><a href="/blog/tags/#Java">Java<span class="count">(2)</span></a></li>
+          <li><a href="/blog/tags/#%E6%9D%82%E8%B0%88">杂谈<span class="count">(2)</span></a></li>
+          <li><a href="/blog/tags/#ecc">ecc<span class="count">(2)</span></a></li>
+          <li><a href="/blog/tags/#Algorithm">Algorithm<span class="count">(1)</span></a></li>
+          <li><a href="/blog/tags/#Program%20Analysis">Program Analysis<span class="count">(1)</span></a></li>
+          </ul>
+        </div>
+      </aside>
+      <main class="content">
+        
+        <article>
+          <header class="post-header">
+            <h1>Gradle文件中依赖项部分详解</h1>
+            <div class="post-meta">
+              <time>2023-04-04</time>
+               · TPLs
+              <div style="margin-top:4px"><span class="tag">Gradle</span> <span class="tag">Android</span> <span class="tag">Build</span> <span class="tag">Dev</span></div>
+            </div>
+          </header>
+          <div class="post-body">
+            <p>这段时间正好进行三方库的研究要获取大量的lib，顺带把Gradle依赖这块搞一搞，主要整理了下Gradle依赖的类型、依赖配置、依赖冲突如何解决。</p>
+<h1>依赖类型</h1>
+<p>dependencies DSL标签是标准Gradle API中的一部分，而不是Android Gradle插件的特性，所以它不属于android标签。</p>
+<p>依赖有三种方式：</p>
+<pre><code class="hljs language-Gradle"><span class="hljs-keyword">dependencies</span> {
+    <span class="hljs-comment">// Dependency on a local library module</span>
+    implementation <span class="hljs-keyword">project</span>(<span class="hljs-string">&quot;:mylibrary&quot;</span>)
+
+    <span class="hljs-comment">// Dependency on local binaries</span>
+    implementation <span class="hljs-keyword">fileTree</span>(dir: <span class="hljs-string">&#x27;libs&#x27;</span>, <span class="hljs-keyword">include</span>: [<span class="hljs-string">&#x27;*.jar&#x27;</span>])
+
+    <span class="hljs-comment">// Dependency on a remote binary</span>
+    implementation <span class="hljs-string">&#x27;com.example.android:app-magic:12.3&#x27;</span>
+}
+</code></pre><h2>本地library模块依赖</h2>
+<pre><code class="hljs language-Gradle">implementation <span class="hljs-keyword">project</span>(<span class="hljs-string">&quot;:mylibrary&quot;</span>)
+</code></pre><p>这种依赖方式是直接依赖本地库工程代码的（需要注意的是，<code>mylibrary</code>的名字必须匹配在<code>settings.gradle</code>中<code>include</code>标签下定义的模块名字）。</p>
+<h2>本地二进制依赖</h2>
+<pre><code class="hljs language-Gradle">implementation <span class="hljs-keyword">fileTree</span>(dir: <span class="hljs-string">&#x27;libs&#x27;</span>, <span class="hljs-keyword">include</span>: [<span class="hljs-string">&#x27;*.jar&#x27;</span>])
+</code></pre><p>这种依赖方式是依赖工程中的 <code>module_name/libs/目录下的Jar文件</code>（注意Gradle的路径是相对于build.gradle文件来读取的，所以上面是这样的相对路径）。</p>
+<p>如果只想依赖单个特定本地二进制库，可以如下配置：</p>
+<pre><code class="hljs language-Gradle">implementation files(<span class="hljs-string">&#x27;libs/foo.jar&#x27;</span>, <span class="hljs-string">&#x27;libs/bar.jar&#x27;</span>)
+</code></pre><h2>远程二进制依赖</h2>
+<p>最常见，个人基本就只使用过这一种。有两种写法，一种简写一种完整：</p>
+<pre><code class="hljs language-Gradle">implementation <span class="hljs-string">&#x27;com.example.android:myclass:12.3&#x27;</span>
+
+implementation <span class="hljs-keyword">group</span>: <span class="hljs-string">&#x27;com.example.android&#x27;</span>, name: <span class="hljs-string">&#x27;myclass&#x27;</span>, version: <span class="hljs-string">&#x27;12.3&#x27;</span>
+</code></pre><h1>依赖配置</h1>
+<p>目前Gradle版本支持的依赖配置有：<code>implementation</code>、<code>api</code>、<code>compileOnly</code>、<code>runtimeOnly</code> 和 <code>annotationProcessor</code>，已经废弃的配置有：<code>compile</code>、<code>provided</code>、<code>apk</code>、<code>providedCompile</code>。此外依赖配置还可以加一些配置项，例如<code>AndroidTestImplementation</code>、<code>debugApi</code>等等。</p>
+<p>但是我们常常还能找到各种各样的前缀，比如会有：<code>testCompile</code>，<code> testImplementation</code>，<code>androidTestImplementation</code>等等等等，以下先讲主要配置：</p>
+<h2>implementation</h2>
+<p>会添加依赖到编译路径，并且会将依赖打包到输出，但是在编译时不会将依赖的实现暴露给其他module，也就是只有在运行时其他module才能访问这个依赖中的实现。使用这个配置，可以显著提升构建时间，因为它可以减少重新编译的module的数量。</p>
+<p>这个指令的特点就是，对于使用了该命令编译的依赖，对该项目有依赖的项目将无法访问到使用该命令编译的依赖中的任何程序，也就是将该依赖隐藏在内部，而不对外部公开。</p>
+<h2>api</h2>
+<blockquote>
+<p>提一嘴，虽然<code>compile</code>已经废弃了，但是由于我分析的可能还有很多老版本，所以还是会有很多<code>compile</code>在里面的。事实上，<code>compile</code>完全等同于<code>api</code></p>
+</blockquote>
+<p>会添加依赖到编译路径，并且会将依赖打包到输出，与<code>implementation</code>不同，这个依赖可以传递，其他module无论在编译时和运行时都可以访问这个依赖的实现，也就是会泄漏一些不应该不使用的实现。举个例子，A依赖B，B依赖C，如果都是使用<code>api</code>配置的话，A可以直接使用C中的类（编译时和运行时），而如果是使用<code>implementation</code>配置的话，在编译时，A是无法访问C中的类的。</p>
+<h2>compileOnly</h2>
+<blockquote>
+<p>等于老版本的<code>provided</code></p>
+</blockquote>
+<p>把依赖加到编译路径，编译时使用，不会打包到输出。这可以减少输出的体积，在只在编译时需要，在运行时可选的情况，很有用。</p>
+<h2>runtimeOnly</h2>
+<blockquote>
+<p>等于老版本的<code>apk</code></p>
+</blockquote>
+<p>依赖会一起打包到apk，运行时调用，但是不会添加到编译路径，应该不会一起混淆和优化。</p>
+<h1>依赖冲突</h1>
+<h2>定位冲突</h2>
+<p>依赖冲突可能会报类似下面的错误：</p>
+<pre><code><span class="hljs-function"><span class="hljs-keyword">Program</span></span> <span class="hljs-keyword">type</span> already <span class="hljs-built_in">present</span> com.example.MyClass
+</code></pre><p>通过查找类的方式（ctrl + O）定位到冲突的依赖，进行排除。</p>
+<h2>排除依赖</h2>
+<h3>dependencies中排除（细粒度）</h3>
+<pre><code class="hljs language-Gradle"><span class="hljs-keyword">compile</span>(<span class="hljs-string">&#x27;com.taobao.android:accs-huawei:1.1.2@aar&#x27;</span>) {
+        transitive = <span class="hljs-keyword">true</span>
+        <span class="hljs-keyword">exclude</span> <span class="hljs-keyword">group</span>: <span class="hljs-string">&#x27;com.taobao.android&#x27;</span>, module: <span class="hljs-string">&#x27;accs_sdk_taobao&#x27;</span>
+}
+</code></pre><h3>全局配置排除</h3>
+<pre><code class="hljs language-Gradle"><span class="hljs-keyword">configurations</span> {
+    <span class="hljs-keyword">compile</span>.<span class="hljs-keyword">exclude</span> module: <span class="hljs-string">&#x27;cglib&#x27;</span>
+    <span class="hljs-comment">//全局排除原有的tnet jar包与so包分离的配置，统一使用aar包中的内容</span>
+    all*.<span class="hljs-keyword">exclude</span> <span class="hljs-keyword">group</span>: <span class="hljs-string">&#x27;com.taobao.android&#x27;</span>, module: <span class="hljs-string">&#x27;tnet-jni&#x27;</span>
+    all*.<span class="hljs-keyword">exclude</span> <span class="hljs-keyword">group</span>: <span class="hljs-string">&#x27;com.taobao.android&#x27;</span>, module: <span class="hljs-string">&#x27;tnet-so&#x27;</span>
+}
+</code></pre><h3>禁用依赖传递</h3>
+<pre><code class="hljs language-Gradle"><span class="hljs-keyword">compile</span>(<span class="hljs-string">&#x27;com.zhyea:ar4j:1.0&#x27;</span>) {
+    transitive = <span class="hljs-keyword">false</span>
+}
+
+<span class="hljs-keyword">configurations</span>.all {
+    transitive = <span class="hljs-keyword">false</span>
+}
+</code></pre><p>还可以在引入是标注<code>@jar</code></p>
+<pre><code class="hljs language-Gradle"><span class="hljs-keyword">compile</span> <span class="hljs-string">&#x27;com.zhyea:ar4j:1.0@jar&#x27;</span>
+</code></pre><h3>强制使用某个版本</h3>
+<p>如果某个依赖项是必需的，而又存在依赖冲突时，此时没必要逐个进行排除，可以使用<code>force</code>属性标识需要进行依赖统一。</p>
+<pre><code class="hljs language-Gradle"><span class="hljs-keyword">compile</span>(<span class="hljs-string">&#x27;com.zhyea:ar4j:1.0&#x27;</span>) {
+    force = <span class="hljs-keyword">true</span>
+}
+
+<span class="hljs-keyword">configurations</span>.all {
+    resolutionStrategy {
+        force <span class="hljs-string">&#x27;org.hamcrest:hamcrest-core:1.3&#x27;</span>
+    }
+}
+</code></pre><h3>后记</h3>
+<p>其实本人并不是干开发的，所以记录的这些只是对一些分析很有帮助，感觉对于开发是远远不够的</p>
+
+          </div>
+        </article>
+      </main>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    © 2026 MMonster
+  </footer>
+
+  <script>
+    function toggleSidebar() {
+      document.querySelector('.sidebar').classList.toggle('sidebar-open');
+      document.querySelector('.sidebar-overlay').classList.toggle('active');
+    }
+    // Top nav: scrolled style + hide on scroll down, show on scroll up
+    (function() {
+      var nav = document.getElementById('topNav');
+      if (!nav) return;
+      var lastY = 0;
+      window.addEventListener('scroll', function() {
+        var y = window.scrollY;
+        nav.classList.toggle('scrolled', y > 100);
+        if (y > window.innerHeight * 0.8) {
+          nav.classList.toggle('nav-hidden', y > lastY);
+        } else {
+          nav.classList.remove('nav-hidden');
+        }
+        lastY = y;
+      });
+    })();
+  </script>
+</body>
+</html>

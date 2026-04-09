@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MMonster的小窝</title>
+  <link rel="stylesheet" href="/blog/css/style.css">
+  <link rel="stylesheet" href="/blog/css/hljs.css">
+</head>
+<body>
+  <div class="bg-layer" style="background-image:url('/blog/bg/002.jpg')"></div>
+  
+  <nav class="top-nav" id="topNav">
+    <a href="/blog/">Home</a>
+    <a href="/blog/archives/">Archives</a>
+    <a href="/blog/tags/">Tags</a>
+    <a href="https://github.com/MM0n5Ter">GitHub</a>
+  </nav>
+  
+  <section class="hero">
+    <h1>MMonster的小窝</h1>
+    <p class="tagline">Security · Code · Life</p>
+    <div class="scroll-hint">↓</div>
+  </section>
+  <button class="hamburger" onclick="toggleSidebar()" aria-label="Menu">☰</button>
+  <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+  <div class="glass-container">
+    <div class="layout-flex">
+      <aside class="sidebar">
+        
+        <img src="/blog/img/avatar.png" alt="avatar" class="sidebar-avatar">
+        <div class="sidebar-name">MMonster</div>
+        <div class="sidebar-bio">Security · Code · Life</div>
+
+        <div class="sidebar-section">
+          <div class="sidebar-section-title">Archives</div>
+          <ul class="sidebar-list">
+          <li><a href="/blog/archives/#2025-06">2025-06<span class="count">(1)</span></a></li>
+          <li><a href="/blog/archives/#2023-04">2023-04<span class="count">(3)</span></a></li>
+          <li><a href="/blog/archives/#2023-03">2023-03<span class="count">(2)</span></a></li>
+          <li><a href="/blog/archives/#2021-11">2021-11<span class="count">(1)</span></a></li>
+          <li><a href="/blog/archives/#2021-07">2021-07<span class="count">(2)</span></a></li>
+          <li><a href="/blog/archives/#2021-05">2021-05<span class="count">(1)</span></a></li>
+          </ul>
+        </div>
+
+        <div class="sidebar-section">
+          <div class="sidebar-section-title">Tags</div>
+          <ul class="sidebar-list">
+          <li><a href="/blog/tags/#%E6%97%A7%E5%9C%B0%E7%8B%B1">旧地狱<span class="count">(10)</span></a></li>
+          <li><a href="/blog/tags/#Crypto">Crypto<span class="count">(9)</span></a></li>
+          <li><a href="/blog/tags/#Soot">Soot<span class="count">(3)</span></a></li>
+          <li><a href="/blog/tags/#Android">Android<span class="count">(3)</span></a></li>
+          <li><a href="/blog/tags/#Lattice">Lattice<span class="count">(3)</span></a></li>
+          <li><a href="/blog/tags/#Tools">Tools<span class="count">(2)</span></a></li>
+          <li><a href="/blog/tags/#RE">RE<span class="count">(2)</span></a></li>
+          <li><a href="/blog/tags/#Java">Java<span class="count">(2)</span></a></li>
+          <li><a href="/blog/tags/#%E6%9D%82%E8%B0%88">杂谈<span class="count">(2)</span></a></li>
+          <li><a href="/blog/tags/#ecc">ecc<span class="count">(2)</span></a></li>
+          <li><a href="/blog/tags/#Algorithm">Algorithm<span class="count">(1)</span></a></li>
+          <li><a href="/blog/tags/#Program%20Analysis">Program Analysis<span class="count">(1)</span></a></li>
+          </ul>
+        </div>
+      </aside>
+      <main class="content">
+        <h2 class="page-title">文章</h2>
+<ul class="post-list">
+        <li>
+          <div class="post-date">2025-06-07</div>
+          <div class="post-title"><a href="/blog/posts/SAT-and-SMT/">SAT and SMT</a></div>
+          
+        </li>
+        <li>
+          <div class="post-date">2023-04-13</div>
+          <div class="post-title"><a href="/blog/posts/SPA01/">静态程序分析(1)-控制流分析</a></div>
+          <div class="post-desc">南京大学李樾谭添老师的静态分析课，本篇是第一第二节课关于控制流分析，包括课后作业A1</div>
+        </li>
+        <li>
+          <div class="post-date">2023-04-06</div>
+          <div class="post-title"><a href="/blog/posts/Soot_02/">Soot从入门到入土(2)-IR(Jimple)</a></div>
+          <div class="post-desc">接下来对TPLs的研究将用到soot工具，先进行一个学习</div>
+        </li>
+        <li>
+          <div class="post-date">2023-04-04</div>
+          <div class="post-title"><a href="/blog/posts/Gradle/">Gradle文件中依赖项部分详解</a></div>
+          <div class="post-desc">在使用Gradle来进行构建安卓apk时，总是绕不开三方库的引入和依赖项的引入，进行一个具体的学</div>
+        </li>
+        <li>
+          <div class="post-date">2023-03-28</div>
+          <div class="post-title"><a href="/blog/posts/Soot_01/">Soot从入门到入土(1)-环境配置和基础命令</a></div>
+          <div class="post-desc">接下来对TPLs的研究将用到soot工具，先进行一个学习</div>
+        </li>
+        <li>
+          <div class="post-date">2023-03-28</div>
+          <div class="post-title"><a href="/blog/posts/%E6%96%B0%E5%9C%B0%E7%8B%B1/">新大陆</a></div>
+          
+        </li>
+        <li>
+          <div class="post-date">2021-11-23</div>
+          <div class="post-title"><a href="/blog/posts/%E4%BC%AA%E9%9A%8F%E6%9C%BA%E6%95%B0%E7%94%9F%E6%88%90%E5%99%A8/">伪随机数生成器</a></div>
+          
+        </li>
+        <li>
+          <div class="post-date">2021-07-22</div>
+          <div class="post-title"><a href="/blog/posts/ECC02/">ECC Note 2</a></div>
+          
+        </li>
+        <li>
+          <div class="post-date">2021-07-20</div>
+          <div class="post-title"><a href="/blog/posts/RE01/">RE Note 1</a></div>
+          
+        </li>
+        <li>
+          <div class="post-date">2021-05-30</div>
+          <div class="post-title"><a href="/blog/posts/ECC01/">ECC Note 1</a></div>
+          
+        </li>
+        <li>
+          <div class="post-date">2021-04-15</div>
+          <div class="post-title"><a href="/blog/posts/Lattice%E4%BB%8E%E5%85%A5%E9%97%A8%E5%88%B0%E6%94%BE%E5%BC%83%EF%BC%883%EF%BC%89/">Lattice Note 3</a></div>
+          
+        </li>
+        <li>
+          <div class="post-date">2021-04-10</div>
+          <div class="post-title"><a href="/blog/posts/MRctf2021-Crypto%E6%96%B9%E5%90%91/">MRctf2021 Crypto方向</a></div>
+          
+        </li>
+        <li>
+          <div class="post-date">2021-03-30</div>
+          <div class="post-title"><a href="/blog/posts/Lattice%E4%BB%8E%E5%85%A5%E9%97%A8%E5%88%B0%E6%94%BE%E5%BC%83%EF%BC%882%EF%BC%89/">Lattice Note 2</a></div>
+          
+        </li>
+        <li>
+          <div class="post-date">2021-03-26</div>
+          <div class="post-title"><a href="/blog/posts/Lattice%E4%BB%8E%E5%85%A5%E9%97%A8%E5%88%B0%E6%94%BE%E5%BC%83%EF%BC%881%EF%BC%89/">Lattice Note 1</a></div>
+          
+        </li>
+        <li>
+          <div class="post-date">2021-03-23</div>
+          <div class="post-title"><a href="/blog/posts/2021V-N-Crypto%E6%96%B9%E5%90%91/">2021V&N Crypto方向</a></div>
+          
+        </li>
+        <li>
+          <div class="post-date">2021-03-19</div>
+          <div class="post-title"><a href="/blog/posts/%E5%B8%B8%E8%A7%81%E7%BC%96%E7%A0%81%E7%9A%84%E7%89%B9%E5%BE%81%E8%AF%86%E5%88%AB/">常见编码的特征识别</a></div>
+          
+        </li>
+        <li>
+          <div class="post-date">2021-03-18</div>
+          <div class="post-title"><a href="/blog/posts/%E6%A2%A6%E5%BC%80%E5%A7%8B%E7%9A%84%E5%9C%B0%E6%96%B9/">梦开始的地方(old)</a></div>
+          
+        </li>
+</ul>
+      </main>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    © 2026 MMonster
+  </footer>
+
+  <script>
+    function toggleSidebar() {
+      document.querySelector('.sidebar').classList.toggle('sidebar-open');
+      document.querySelector('.sidebar-overlay').classList.toggle('active');
+    }
+    // Top nav: scrolled style + hide on scroll down, show on scroll up
+    (function() {
+      var nav = document.getElementById('topNav');
+      if (!nav) return;
+      var lastY = 0;
+      window.addEventListener('scroll', function() {
+        var y = window.scrollY;
+        nav.classList.toggle('scrolled', y > 100);
+        if (y > window.innerHeight * 0.8) {
+          nav.classList.toggle('nav-hidden', y > lastY);
+        } else {
+          nav.classList.remove('nav-hidden');
+        }
+        lastY = y;
+      });
+    })();
+  </script>
+</body>
+</html>
