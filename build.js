@@ -11,7 +11,7 @@ const SITE_TAGLINE = 'Security · Code · Life';
 const BASE_PATH = process.argv.includes('--local') ? '' : '/blog';
 const SRC_DIR = path.join(__dirname, 'src');
 const DIST_DIR = path.join(__dirname, 'dist');
-const BG_SRC = path.join(__dirname, '..', 'bg', '002.jpg');
+const BG_SRC = path.join(SRC_DIR, 'img', 'bg.jpg');
 
 // ===== Marked setup =====
 const marked = new Marked(
@@ -207,6 +207,9 @@ function layout(title, bodyHTML, options = {}) {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>${title === SITE_TITLE ? title : title + ' - ' + SITE_TITLE}</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="${BASE_PATH}/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="${BASE_PATH}/favicon/favicon-16x16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="${BASE_PATH}/favicon/apple-touch-icon.png">
   <link rel="stylesheet" href="${BASE_PATH}/css/style.css">
   <link rel="stylesheet" href="${BASE_PATH}/css/hljs.css">${mathjaxScripts}
 </head>
@@ -417,6 +420,9 @@ function build() {
     mkdirp(path.join(DIST_DIR, 'bg'));
     fs.copyFileSync(BG_SRC, path.join(DIST_DIR, 'bg', '002.jpg'));
   }
+
+  // Copy favicons
+  copyDir(path.join(SRC_DIR, 'favicon'), path.join(DIST_DIR, 'favicon'));
 
   const elapsed = Date.now() - startTime;
   console.log(`  Done in ${elapsed}ms → ${DIST_DIR}`);
