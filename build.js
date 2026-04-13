@@ -15,6 +15,7 @@ const BG_SRC = path.join(SRC_DIR, 'img', 'bg.jpg');
 
 // ===== Marked setup =====
 const marked = new Marked(
+  { breaks: true },
   markedHighlight({
     langPrefix: 'hljs language-',
     highlight(code, lang) {
@@ -207,6 +208,9 @@ function layout(title, bodyHTML, options = {}) {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>${title === SITE_TITLE ? title : title + ' - ' + SITE_TITLE}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <link rel="icon" type="image/png" sizes="32x32" href="${BASE_PATH}/favicon/favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="${BASE_PATH}/favicon/favicon-16x16.png">
   <link rel="apple-touch-icon" sizes="180x180" href="${BASE_PATH}/favicon/apple-touch-icon.png">
