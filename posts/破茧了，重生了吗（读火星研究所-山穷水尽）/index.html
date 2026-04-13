@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>破茧了，重生了吗（读火星研究所-山穷水尽） - MMonster的小窝</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/favicon/favicon-16x16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/favicon/apple-touch-icon.png">
+  <link rel="stylesheet" href="/blog/css/style.css">
+  <link rel="stylesheet" href="/blog/css/hljs.css">
+</head>
+<body>
+  <div class="bg-layer" style="background-image:url('/blog/bg/002.jpg')"></div>
+  
+  <nav class="top-nav" id="topNav">
+    <a href="/blog/">Home</a>
+    <a href="/blog/archives/">Archives</a>
+    <a href="/blog/tags/">Tags</a>
+    <a href="https://github.com/MM0n5Ter">GitHub</a>
+  </nav>
+  
+  <button class="hamburger" onclick="toggleSidebar()" aria-label="Menu">☰</button>
+  <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+  <div class="glass-container">
+    <div class="layout-flex">
+      <aside class="sidebar">
+        
+        <img src="/blog/img/avatar.png" alt="avatar" class="sidebar-avatar">
+        <div class="sidebar-name">MMonster</div>
+        <div class="sidebar-bio">Security · Code · Life</div>
+
+        <div class="sidebar-section">
+          <div class="sidebar-section-title">Archives</div>
+          <ul class="sidebar-list">
+          <li><a href="/blog/archives/#2026-04">2026-04<span class="count">(1)</span></a></li>
+          <li><a href="/blog/archives/#2025-06">2025-06<span class="count">(1)</span></a></li>
+          <li><a href="/blog/archives/#2023-04">2023-04<span class="count">(3)</span></a></li>
+          <li><a href="/blog/archives/#2023-03">2023-03<span class="count">(2)</span></a></li>
+          <li><a href="/blog/archives/#2021-11">2021-11<span class="count">(1)</span></a></li>
+          <li><a href="/blog/archives/#2021-07">2021-07<span class="count">(2)</span></a></li>
+          </ul>
+        </div>
+
+        <div class="sidebar-section">
+          <div class="sidebar-section-title">Tags</div>
+          <ul class="sidebar-list">
+          <li><a href="/blog/tags/#%E6%97%A7%E5%9C%B0%E7%8B%B1">旧地狱<span class="count">(10)</span></a></li>
+          <li><a href="/blog/tags/#Crypto">Crypto<span class="count">(9)</span></a></li>
+          <li><a href="/blog/tags/#Miscs">Miscs<span class="count">(3)</span></a></li>
+          <li><a href="/blog/tags/#Soot">Soot<span class="count">(3)</span></a></li>
+          <li><a href="/blog/tags/#Android">Android<span class="count">(3)</span></a></li>
+          <li><a href="/blog/tags/#Lattice">Lattice<span class="count">(3)</span></a></li>
+          <li><a href="/blog/tags/#Program%20Analysis">Program Analysis<span class="count">(2)</span></a></li>
+          <li><a href="/blog/tags/#Tools">Tools<span class="count">(2)</span></a></li>
+          <li><a href="/blog/tags/#RE">RE<span class="count">(2)</span></a></li>
+          <li><a href="/blog/tags/#Java">Java<span class="count">(2)</span></a></li>
+          <li><a href="/blog/tags/#ecc">ecc<span class="count">(2)</span></a></li>
+          <li><a href="/blog/tags/#Thinking">Thinking<span class="count">(1)</span></a></li>
+          </ul>
+        </div>
+      </aside>
+      <main class="content">
+        
+        <article>
+          <header class="post-header">
+            <h1>破茧了，重生了吗（读火星研究所-山穷水尽）</h1>
+            <div class="post-meta">
+              <time>2026-04-12</time>
+               · Miscs
+              <div style="margin-top:4px"><span class="tag">Thinking</span> <span class="tag">Miscs</span></div>
+            </div>
+          </header>
+          <div class="post-body">
+            <p>我的博客是在刚上大学的时候开始创建的，那是我刚刚开始接触CTF，开始接触密码学，怀抱着对技术对比赛的热情。那时候各大比赛的writeup大多是从大佬的博客上放出的，我也有样学样的在自己的博客上写写writeup和学习笔记。但这和我曾经开启过的很多事情一样，一年半载后热情消退了，博客几乎也再也没有更新过，只有偶尔两次又重新尝试捡起来，一次是我开始学习程序分析并前往上交实习的过程中，一次就是在gap year学习symbolic execution时。</p>
+<p>现在想来，把博客列为学习笔记还是给它赋予了太大的目的性和压力，也许博客本就应该时一个随想随写的地方。</p>
+<p>最近重读了StormRaiser佬的文章山穷水尽，颇有感触。上一次读的时候还是在大一，那时的我愤世嫉俗，自卑又自傲，总觉得自己能冠绝众人，又害怕去真正尝试从而戳破自我的幻想。果不其然，我的大学四年在平庸中度过，成绩自不必说只是中庸，实习没有实习，科研只有两篇二作，实在是称不上能有什么自傲的资本。</p>
+<p>我和佬最大的共同点也许就是竞赛了，我也是在小学五年级就接触了信息奥赛，只是在初二时因为竞争压力太大就放弃了，也许信息竞赛给我带来的最大的影响就是把我送进了当时最好的初中理科班，以及一生oi情（笑）。当时班上最牛的轩导在初三拿了APIO亚太金牌直接保送了清华，还有两位同学也一起拿到了清华的降分。也也许早早与真正的天才同窗，就是为了让我认清人与人的客观差距，并强迫我正视自己真实的实力。</p>
+<p>但竞赛留给我的另一个深远影响，是那种做题家的气质，这种气质在竞赛圈子里非常盛行，尤其在信息奥赛圈。大佬互膜，刻意装弱，现在想来是一种优绩主义盛行下的扭曲观念。竞赛圈的弱肉强食远比普通升学来得直接，也更加的强烈，尤其是竞赛上的成功能带来一种在学习生活中的特权，由此也会辐射到那些竞赛生多的教改班级，这也深深影响了我此后的生活，现在大概摆脱了一些，又似乎没有完全剥离。</p>
+<p>很多时候我感觉我也是在被推着走，我选择计算机的道路也是何其相似，只是我并没有佬那么有天赋也没有他那么努力，当时我的大学四年也几乎都是摆烂度过的因为我的高考成绩并不理想，大学毕业第一次申请PhD就受到了社会的毒打只能gap，第二次申请PhD又被川普毒打（恼），最终来到了jhu。也许命运早就指明了方向，我在这里开启了新的阶段，虽然我从来不信命运这种东西。</p>
+<p>佬在文章后面分享了他的二次元、摄影等爱好，这让我产生了强烈的共鸣。我一直有一颗搞艺术的心，我在初高中经常画画，但我既没有科班训练也不见得很有天赋，大多以临摹+描改为主；音乐也是，我也常幻想去学乐器或编曲，但总在时间的借口前败下阵来。后来高中自学了 bbox 算是某种程度的弥补，现在能在阿卡贝拉乐团担任 bbox 手，也能用loop station做几首曲子，即便离我憧憬的技术巅峰还有距离，但至少节奏是在自己嘴里的。我初高中的时候也很喜欢文学，写过现在看来极其可笑的中二病心理剖析，造化弄人，我自认语文终究不如理科好，最钟爱的数学却在高考时背叛了我。</p>
+<p>PhD在我眼里究竟象征着什么呢，也许和佬的想法没有那么的不同，象征着最理性的分析和思考，象征着从无到有构建底层系统的造物主快感，象征着一个自由的生活状态，一切尽掌握在我手中。我可能也觉得如果我去读了phd，那么这些爱好我应该能自然而然得接着开展了吧，实际上这些爱好进展最好的时候，是在我socall压力最大的高中。自由的生活终究只是一种幻想，我当然知道PhD的生活中，研究和生活交叉在一起，很多时候很难给自己划清一个明确的界限，但至少那种解决问题的快乐是真实的是可感的。</p>
+<p>写下这段文字的时候，NodeJS依旧在给我打人生的断点，我在lead我自己的第一个项目，我在与我很欣赏的AP合作，我即将去CISPA进行暑研，我在Music Dynasty的阿卡贝拉生涯也非常顺利，一切似乎都在非常顺利的进行中；我还有很多的事想做，我还有很多的地方想去，想去做音乐，想去做美食，想去跑马，想去创造最牛的算法和系统，想去寻找自己的真物，想去破解自己的谜题。</p>
+<p>明日天气如何？
+或多云间晴，或天崩地裂
+堕落天使和康斯坦丁，都不在意，明日的天气</p>
+<p><em>缺省Default · 明日天气如何</em></p>
+
+          </div>
+        </article>
+      </main>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    © 2026 MMonster
+  </footer>
+
+  <script>
+    function toggleSidebar() {
+      document.querySelector('.sidebar').classList.toggle('sidebar-open');
+      document.querySelector('.sidebar-overlay').classList.toggle('active');
+    }
+    // Top nav: scrolled style + hide on scroll down, show on scroll up
+    (function() {
+      var nav = document.getElementById('topNav');
+      if (!nav) return;
+      var lastY = 0;
+      window.addEventListener('scroll', function() {
+        var y = window.scrollY;
+        nav.classList.toggle('scrolled', y > 100);
+        if (y > window.innerHeight * 0.8) {
+          nav.classList.toggle('nav-hidden', y > lastY);
+        } else {
+          nav.classList.remove('nav-hidden');
+        }
+        lastY = y;
+      });
+    })();
+  </script>
+</body>
+</html>
