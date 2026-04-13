@@ -4,6 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>伪随机数生成器 - MMonster的小窝</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <link rel="icon" type="image/png" sizes="32x32" href="/blog/favicon/favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/blog/favicon/favicon-16x16.png">
   <link rel="apple-touch-icon" sizes="180x180" href="/blog/favicon/apple-touch-icon.png">
@@ -83,10 +86,7 @@
             <p>源于某一道赛题，明年可以作为招新题出</p>
 <h2>随机数</h2>
 <p>随机数分为真随机数和伪随机数，我们程序使用的基本都是伪随机数，其中伪随机又分为强伪随机数和弱伪随机数。</p>
-<p>真随机数，通过物理实验得出，比如掷钱币、骰子、转轮、使用电子元件的噪音、核裂变等。需要满足随机性、不可预测性、不可重现性。
- 伪随机数，通过一定算法和种子得出。软件实现的是伪随机数。
- 强伪随机数，难以预测的随机数。需要满足随机性和不可预测性。
- 弱伪随机数，易于预测的随机数。需要满足随机性。</p>
+<p>真随机数，通过物理实验得出，比如掷钱币、骰子、转轮、使用电子元件的噪音、核裂变等。需要满足随机性、不可预测性、不可重现性。<br> 伪随机数，通过一定算法和种子得出。软件实现的是伪随机数。<br> 强伪随机数，难以预测的随机数。需要满足随机性和不可预测性。<br> 弱伪随机数，易于预测的随机数。需要满足随机性。</p>
 <p>**只要这个随机数是由确定算法生成的，那就是伪随机。**只能通过不断算法优化，使你的随机数更接近随机。</p>
 <p>有限状态机不能产生真正的随机数的，所以，现代计算机中，无法通过一个纯算法来生成真正的随机数，无论是哪种语言，单纯的算法生成的数字都是伪随机数，都是由可确定的函数通过一个种子，产生的伪随机数。</p>
 <p>这也就意味着，如果知道了种子，就可以推断接下来的随机数序列的信息。这就有了可预测性。</p>
@@ -129,8 +129,7 @@
     }
 </code></pre><p>安全性非常得差，只要知道连续几个就可以直接推出整个序列，而且序列是循环的</p>
 <p><strong>分析和攻击方法</strong>：</p>
-<p>先求n，只要稍作变形就可
-<div class="math-display">$
+<p>先求n，只要稍作变形就可<br><div class="math-display">$
   \left
   \{\begin{aligned}
   t_0 & =  s_1-s_0&\pmod n\\

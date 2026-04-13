@@ -4,6 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MRctf2021 Crypto方向 - MMonster的小窝</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <link rel="icon" type="image/png" sizes="32x32" href="/blog/favicon/favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/blog/favicon/favicon-16x16.png">
   <link rel="apple-touch-icon" sizes="180x180" href="/blog/favicon/apple-touch-icon.png">
@@ -131,11 +134,9 @@ length = <span class="hljs-built_in">len</span>(flag) * <span class="hljs-number
 
 main()
 </code></pre><p>nc接口连进去，先是一个sha512的暴力解密</p>
-<p>然后是一个初见觉得很怪异的方程：
-<div class="math-display">$
+<p>然后是一个初见觉得很怪异的方程：<br><div class="math-display">$
 \Sigma a_ix_i=0
-$</div>
-其中<span class="math-inline">$a_i$</span>为224个512位的大素数</p>
+$</div><br>其中<span class="math-inline">$a_i$</span>为224个512位的大素数</p>
 <p>然后需要解出224组<del>做完后发现其实只要223组</del>不同的解</p>
 <p>一开始的想法为<span class="math-inline">$x_i=(-1)^i lcm(a_i)\div a_i$</span>，然后224组就每组乘上一个不同的系数，然后时间炸了。。。</p>
 <p>然后想出两两配对相消，然后只让一组乘系数来保证不同解，成功搞出flag</p>

@@ -4,6 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Lattice Note 2 - MMonster的小窝</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <link rel="icon" type="image/png" sizes="32x32" href="/blog/favicon/favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/blog/favicon/favicon-16x16.png">
   <link rel="apple-touch-icon" sizes="180x180" href="/blog/favicon/apple-touch-icon.png">
@@ -90,11 +93,9 @@
 <p>在<span class="math-inline">$SVP_γ$</span>中，问题的设定大致一样，但是唯一不一样的在于，我们找到的点<span class="math-inline">$Bx$</span>，并不一定需要恰好是最短向量<span class="math-inline">$λ_1$</span>，而只要满足小于等于<span class="math-inline">$λ_1$</span>的一个倍数<span class="math-inline">$γ$</span>就行了。</p>
 <h2>最近向量问题CVP</h2>
 <p>CVP问题的定义：在连续空间内任意给一点<span class="math-inline">$t$</span>，找距离这个点最近的格点<span class="math-inline">$Bx$</span>。</p>
-<p><img loading="lazy" src="/blog/img/old/2.1.png" alt="2.1">
-<div class="math-display">$
+<p><img loading="lazy" src="/blog/img/old/2.1.png" alt="2.1"><br><div class="math-display">$
 ||Bx||\leλ
-$</div>
-此处的<span class="math-inline">$λ$</span>即指覆盖半径。同理可得，CVP也有一个宽松版本<span class="math-inline">$CVP_γ$</span>。</p>
+$</div><br>此处的<span class="math-inline">$λ$</span>即指覆盖半径。同理可得，CVP也有一个宽松版本<span class="math-inline">$CVP_γ$</span>。</p>
 <h2>两种CVP问题</h2>
 <p>给定一个格<span class="math-inline">$L$</span>，与一个随机点<span class="math-inline">$t$</span>还有搜索距离<span class="math-inline">$d$</span>，并且假设<span class="math-inline">$μ(t,L)≤d$</span>，CVP问题是让我们找到一个合理的格点<span class="math-inline">$Bx∈L$</span>并且这个点到<span class="math-inline">$t$</span>的距离小于等于<span class="math-inline">$d$</span>。</p>
 <p>CVP问题对于搜索的范围和结果的大小已经有所约束了，但是并没有约束一共有多少结果和范围究竟有多大。所以CVP问题又可以细分为两种主要的版本。</p>
@@ -117,8 +118,7 @@ $</div>
 <h2>将ADD问题归约到SIVP问题上</h2>
 <p>假设我们需要求解ADD(L,t)，我们可以首先用SIVP算法得到这个Lattice的n个独立最短向量V=SIVP(L)。一旦得到了V之后，我们就可以选取这些向量作为基，平分整个多维空间<span class="math-inline">$R_n$</span>。然后我们只需要看t在那个分区中，然后向上或者向下取整一下，找到那个分区对应的格点，就是我们ADD问题的解了。</p>
 <p><img loading="lazy" src="/blog/img/old/5.1.png" alt="5.1"></p>
-<p>因为我们是使用了取整的操作来找到格点的，所以这个解的格点到tt的距离，我们也可以找到一个最大的上限，即：
-<div class="math-display">$
+<p>因为我们是使用了取整的操作来找到格点的，所以这个解的格点到tt的距离，我们也可以找到一个最大的上限，即：<br><div class="math-display">$
 ∑_i\frac12||v_i||≤(n/2)λ_n≤nμ
 $</div></p>
 <p><del>其实我还不是很懂，人麻了</del></p>
